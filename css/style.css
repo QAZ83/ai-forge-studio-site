@@ -1,0 +1,792 @@
+/* ===================================
+   AI Forge Studio - Advanced UI
+   Designed by: M.3R3
+   =================================== */
+
+/* CSS Variables */
+:root {
+    /* Color Palette */
+    --primary-bg: #0a0e1a;
+    --secondary-bg: #0f1420;
+    --panel-bg: #131824;
+    --panel-border: rgba(0, 217, 255, 0.2);
+    --primary-cyan: #00d9ff;
+    --primary-teal: #00ffcc;
+    --accent-blue: #0099ff;
+    --text-primary: #e0e6ed;
+    --text-secondary: #8b95a8;
+    --success-green: #00ff88;
+    --warning-yellow: #ffd500;
+    --error-red: #ff3366;
+
+    /* Shadows & Glows */
+    --glow-cyan: 0 0 20px rgba(0, 217, 255, 0.4);
+    --glow-panel: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --inner-glow: inset 0 0 20px rgba(0, 217, 255, 0.1);
+
+    /* Typography */
+    --font-display: 'Orbitron', sans-serif;
+    --font-body: 'Rajdhani', sans-serif;
+
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+}
+
+/* ===================================
+   Base Styles & Reset
+   =================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--primary-bg);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* ===================================
+   Circuit Background Animation
+   =================================== */
+.circuit-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(rgba(0, 217, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: 0;
+    pointer-events: none;
+    animation: circuitMove 20s linear infinite;
+}
+
+.circuit-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(0, 217, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(0, 153, 255, 0.05) 0%, transparent 50%);
+    animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes circuitMove {
+    0% { background-position: 0 0; }
+    100% { background-position: 50px 50px; }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* ===================================
+   Main Container
+   =================================== */
+.main-container {
+    position: relative;
+    z-index: 1;
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+/* ===================================
+   Header Styles
+   =================================== */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: rgba(19, 24, 36, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--glow-panel);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.logo-icon {
+    animation: rotateLogo 10s linear infinite;
+}
+
+@keyframes rotateLogo {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.logo-text h1 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-cyan), var(--accent-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+.logo-text .subtitle {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+/* Navigation */
+.main-nav {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.nav-btn, .search-btn, .load-btn, .terminal-btn {
+    background: rgba(0, 217, 255, 0.05);
+    border: 1px solid rgba(0, 217, 255, 0.2);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover, .search-btn:hover, .load-btn:hover, .terminal-btn:hover {
+    background: rgba(0, 217, 255, 0.15);
+    border-color: var(--primary-cyan);
+    box-shadow: var(--glow-cyan);
+    transform: translateY(-2px);
+}
+
+.nav-btn.active {
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(0, 153, 255, 0.2));
+    border-color: var(--primary-cyan);
+    box-shadow: var(--glow-cyan);
+}
+
+/* ===================================
+   Content Grid Layout
+   =================================== */
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: var(--spacing-md);
+    grid-template-areas:
+        "gpu system"
+        "training training"
+        "dev editor";
+}
+
+.gpu-output {
+    grid-area: gpu;
+}
+
+.system-status {
+    grid-area: system;
+}
+
+.training-panel {
+    grid-area: training;
+}
+
+.dev-environment {
+    grid-area: dev;
+}
+
+.code-editor {
+    grid-area: editor;
+}
+
+/* ===================================
+   Panel Styles
+   =================================== */
+.panel {
+    background: rgba(19, 24, 36, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--glow-panel);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent,
+        var(--primary-cyan),
+        transparent);
+    animation: scanLine 3s linear infinite;
+}
+
+@keyframes scanLine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.panel:hover {
+    border-color: var(--primary-cyan);
+    box-shadow: 0 8px 32px rgba(0, 217, 255, 0.3);
+    transform: translateY(-4px);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+}
+
+.panel-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-cyan);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.panel-action {
+    background: rgba(0, 217, 255, 0.1);
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    color: var(--primary-cyan);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.panel-action:hover {
+    background: rgba(0, 217, 255, 0.2);
+    box-shadow: var(--glow-cyan);
+    transform: rotate(90deg);
+}
+
+/* ===================================
+   GPU Visualization
+   =================================== */
+.gpu-visualization {
+    position: relative;
+    min-height: 300px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+#gpuCanvas {
+    width: 100%;
+    height: 300px;
+    display: block;
+}
+
+.gpu-info {
+    position: absolute;
+    bottom: var(--spacing-sm);
+    left: var(--spacing-sm);
+    right: var(--spacing-sm);
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+}
+
+.info-line {
+    padding: 4px 8px;
+    margin: 2px 0;
+    border-radius: var(--radius-sm);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.info-line.success {
+    color: var(--success-green);
+    border-left: 3px solid var(--success-green);
+}
+
+.info-line.warning {
+    color: var(--warning-yellow);
+    border-left: 3px solid var(--warning-yellow);
+}
+
+.info-line.info {
+    color: var(--primary-cyan);
+    border-left: 3px solid var(--primary-cyan);
+}
+
+/* ===================================
+   System Status
+   =================================== */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.status-item h3 {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* Circular Progress */
+.circular-progress {
+    position: relative;
+    width: 140px;
+    height: 140px;
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+    fill: none;
+    stroke: rgba(0, 217, 255, 0.1);
+    stroke-width: 8;
+}
+
+.progress-ring-fill {
+    fill: none;
+    stroke: var(--primary-cyan);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 377;
+    stroke-dashoffset: 377;
+    filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.8));
+    animation: fillProgress 2s ease-out forwards;
+}
+
+@keyframes fillProgress {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.progress-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.progress-value .value {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-cyan);
+    text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+}
+
+.progress-value .label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    margin-top: var(--spacing-sm);
+}
+
+.toggle-switch input[type="checkbox"] {
+    display: none;
+}
+
+.toggle-switch label {
+    display: block;
+    width: 50px;
+    height: 26px;
+    background: rgba(0, 217, 255, 0.2);
+    border-radius: 13px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 217, 255, 0.3);
+}
+
+.toggle-switch label::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: var(--text-secondary);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.toggle-switch input[type="checkbox"]:checked + label {
+    background: var(--primary-cyan);
+    box-shadow: var(--glow-cyan);
+}
+
+.toggle-switch input[type="checkbox"]:checked + label::after {
+    left: 26px;
+    background: white;
+}
+
+/* GPU Details */
+.gpu-details {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(0, 217, 255, 0.1);
+}
+
+.nvidia-logo {
+    margin-bottom: var(--spacing-sm);
+}
+
+.gpu-specs p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 6px 0;
+    font-family: 'Courier New', monospace;
+}
+
+.deploy-note {
+    margin-top: var(--spacing-sm);
+    font-size: 0.8rem;
+    color: var(--primary-cyan);
+    font-style: italic;
+}
+
+/* ===================================
+   Training & Charts
+   =================================== */
+.training-panel h3 {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.chart-container {
+    position: relative;
+    height: 200px;
+    margin-bottom: var(--spacing-sm);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm);
+}
+
+#lossChart {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.chart-label {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Action Buttons */
+.action-button {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.action-button.primary {
+    background: linear-gradient(135deg, var(--primary-cyan), var(--accent-blue));
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 217, 255, 0.4);
+}
+
+.action-button.primary:hover {
+    box-shadow: 0 6px 20px rgba(0, 217, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+/* Output Options */
+.output-options {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+    justify-content: center;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.radio-option input[type="radio"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(0, 217, 255, 0.3);
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.radio-option input[type="radio"]:checked {
+    border-color: var(--primary-cyan);
+    box-shadow: var(--glow-cyan);
+}
+
+.radio-option input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background: var(--primary-cyan);
+    border-radius: 50%;
+}
+
+/* ===================================
+   Code Display & Terminal
+   =================================== */
+.code-display, .terminal-output {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    overflow-x: auto;
+}
+
+.code-display pre {
+    margin: 0;
+}
+
+.code-display code {
+    color: var(--text-primary);
+}
+
+/* Code Syntax Highlighting */
+.code-comment { color: #6a9955; }
+.code-keyword { color: #c586c0; }
+.code-function { color: #dcdcaa; }
+.code-bracket { color: #ffd700; }
+.code-special { color: #4ec9b0; }
+.code-variable { color: #9cdcfe; }
+.code-operator { color: #d4d4d4; }
+.code-value { color: #ce9178; }
+.code-punctuation { color: #d4d4d4; }
+
+/* Terminal Lines */
+.terminal-line {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin: 6px 0;
+    padding: 4px 0;
+}
+
+.terminal-line.indent {
+    padding-left: var(--spacing-md);
+}
+
+.prompt {
+    color: var(--success-green);
+    font-weight: bold;
+}
+
+.command {
+    color: var(--primary-cyan);
+}
+
+.icon-info {
+    color: var(--accent-blue);
+}
+
+.icon-arrow {
+    color: var(--primary-cyan);
+}
+
+.icon-win {
+    color: var(--text-secondary);
+}
+
+.info-indicator {
+    position: absolute;
+    bottom: var(--spacing-sm);
+    right: var(--spacing-sm);
+}
+
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 217, 255, 0.2);
+    color: var(--primary-cyan);
+    font-size: 0.9rem;
+    border: 1px solid rgba(0, 217, 255, 0.3);
+}
+
+/* ===================================
+   Responsive Design
+   =================================== */
+@media (max-width: 1400px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "gpu"
+            "system"
+            "training"
+            "dev"
+            "editor";
+    }
+}
+
+@media (max-width: 768px) {
+    .app-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .main-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .output-options {
+        flex-direction: column;
+    }
+}
+
+/* ===================================
+   Animations & Effects
+   =================================== */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(0, 217, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+    }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary-cyan), var(--accent-blue));
+    border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-cyan);
+}
+
+/* Selection Styling */
+::selection {
+    background: rgba(0, 217, 255, 0.3);
+    color: white;
+}
+
+::-moz-selection {
+    background: rgba(0, 217, 255, 0.3);
+    color: white;
+}

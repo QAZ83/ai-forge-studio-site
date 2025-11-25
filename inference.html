@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Inference - AI Forge Studio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="circuit-background"></div>
+    <div class="main-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40">
+                        <defs>
+                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0099ff;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M20 5 L35 15 L35 25 L20 35 L5 25 L5 15 Z" fill="url(#logoGradient)" opacity="0.2"/>
+                        <path d="M20 8 L32 16 L32 24 L20 32 L8 24 L8 16 Z" stroke="url(#logoGradient)" stroke-width="2" fill="none"/>
+                        <circle cx="20" cy="20" r="5" fill="url(#logoGradient)"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>AI Forge Studio</h1>
+                    <p class="subtitle">Model Inference</p>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <button class="nav-btn" onclick="window.location.href='index.html'"><span class="icon">🏠</span><span>الرئيسية</span></button>
+                <button class="nav-btn" onclick="window.location.href='dashboard.html'"><span class="icon">📊</span><span>Dashboard</span></button>
+                <button class="nav-btn" onclick="window.location.href='cuda-integration.html'"><span class="icon">⚡</span><span>CUDA</span></button>
+                <button class="nav-btn" onclick="window.location.href='tensorrt.html'"><span class="icon">🧠</span><span>TensorRT</span></button>
+                <button class="nav-btn" onclick="window.location.href='vulkan.html'"><span class="icon">🎮</span><span>Vulkan</span></button>
+                <button class="nav-btn active"><span class="icon">🚀</span><span>Inference</span></button>
+            </nav>
+        </header>
+
+        <main class="dashboard-grid">
+            <section class="panel wide-panel">
+                <div class="panel-header">
+                    <h2>🚀 Real-Time Inference Engine</h2>
+                    <button class="panel-action" id="start-inference">▶️ Start</button>
+                </div>
+                <div class="panel-content">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h3 style="color: #00d9ff; margin-bottom: 15px;">Select Model</h3>
+                            <select id="model-select" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 2px solid #00d9ff; border-radius: 8px; color: #fff; font-size: 14px;">
+                                <option>ResNet-50 (Image Classification)</option>
+                                <option>YOLO v8 (Object Detection)</option>
+                                <option>Llama 3.1 70B (LLM)</option>
+                                <option>Stable Diffusion XL (Image Generation)</option>
+                                <option>Whisper Large (Speech Recognition)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <h3 style="color: #00d9ff; margin-bottom: 15px;">Inference Settings</h3>
+                            <div style="display: flex; gap: 10px;">
+                                <button onclick="setPrecision('FP32')" class="action-button" style="flex: 1;">FP32</button>
+                                <button onclick="setPrecision('FP16')" class="action-button primary" style="flex: 1;">FP16</button>
+                                <button onclick="setPrecision('INT8')" class="action-button" style="flex: 1;">INT8</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel tall-panel">
+                <div class="panel-header">
+                    <h2>📊 Real-Time Metrics</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-info">
+                                <h3>Latency</h3>
+                                <p class="metric-value" id="latency-display">2.1 ms</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-info">
+                                <h3>Throughput</h3>
+                                <p class="metric-value" id="throughput-display">476 FPS</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-info">
+                                <h3>GPU Usage</h3>
+                                <p class="metric-value" id="gpu-usage">98%</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-info">
+                                <h3>Total Inferences</h3>
+                                <p class="metric-value" id="total-inferences">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <canvas id="inferenceChart" height="250" style="margin-top: 20px;"></canvas>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>🎯 Input/Output</h2>
+                </div>
+                <div class="panel-content">
+                    <h3 style="color: #00d9ff; margin-bottom: 15px;">Input Data</h3>
+                    <textarea id="input-data" style="width: 100%; height: 120px; background: rgba(0, 0, 0, 0.5); border: 2px solid #00d9ff; border-radius: 8px; color: #fff; padding: 12px; font-family: 'Courier New', monospace; resize: vertical;" placeholder="Enter input data or upload file..."></textarea>
+
+                    <div style="margin: 15px 0; display: flex; gap: 10px;">
+                        <button class="action-button" style="flex: 1;" onclick="uploadFile()">📁 Upload File</button>
+                        <button class="action-button primary" style="flex: 1;" onclick="runInference()">🚀 Run Inference</button>
+                    </div>
+
+                    <h3 style="color: #00d9ff; margin-bottom: 15px; margin-top: 25px;">Output Results</h3>
+                    <div id="output-results" style="background: rgba(0, 217, 255, 0.05); border: 2px solid #00d9ff; border-radius: 8px; padding: 15px; min-height: 100px; font-family: 'Courier New', monospace; color: #00ffcc;">
+                        Waiting for inference...
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📈 Batch Processing</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="stat-row">
+                        <span class="stat-label">Batch Size:</span>
+                        <input type="range" id="batch-size" min="1" max="64" value="8" style="flex: 1; margin: 0 15px;" oninput="document.getElementById('batch-value').textContent = this.value">
+                        <span id="batch-value" style="color: #00ffcc; font-weight: 600;">8</span>
+                    </div>
+                    <button class="action-button primary" style="width: 100%; margin-top: 15px;" onclick="runBatchInference()">
+                        🔄 Run Batch Inference
+                    </button>
+                    <div id="batch-progress" style="margin-top: 15px; display: none;">
+                        <div style="background: rgba(0, 217, 255, 0.1); border-radius: 8px; overflow: hidden;">
+                            <div id="batch-bar" style="height: 30px; background: linear-gradient(90deg, #00d9ff 0%, #0099ff 100%); width: 0%; transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 600;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/interactive.js"></script>
+    <script src="js/inference.js"></script>
+</body>
+</html>

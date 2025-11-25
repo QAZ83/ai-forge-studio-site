@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Forge Studio - Multi Dashboard View</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/multi-dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="circuit-background"></div>
+
+    <div class="multi-dashboard-container">
+        <!-- Top Navigation Bar -->
+        <nav class="top-nav">
+            <div class="logo-mini">
+                <svg width="30" height="30" viewBox="0 0 40 40">
+                    <defs>
+                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#0099ff;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M20 8 L32 16 L32 24 L20 32 L8 24 L8 16 Z" stroke="url(#logoGrad)" stroke-width="2" fill="none"/>
+                    <circle cx="20" cy="20" r="5" fill="url(#logoGrad)"/>
+                </svg>
+                <span>AI Forge Studio</span>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-icon-btn" onclick="window.location.href='index.html'">🏠</button>
+                <button class="nav-icon-btn" onclick="window.location.href='dashboard.html'">📊</button>
+                <button class="nav-icon-btn active">⊞</button>
+            </div>
+        </nav>
+
+        <!-- Multi-Window Grid -->
+        <div class="windows-grid">
+            <!-- Window 1: GPU Tracking -->
+            <div class="window-card" id="window-gpu">
+                <div class="window-header">
+                    <h3>AI Forge Studio</h3>
+                    <span class="window-subtitle">GPU Tracking Constantly</span>
+                    <div class="window-controls">
+                        <button class="win-btn minimize">─</button>
+                        <button class="win-btn maximize">□</button>
+                        <button class="win-btn close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="stats-row">
+                        <div class="stat-mini">
+                            <div class="circular-mini" data-value="95">
+                                <svg class="progress-ring-mini" width="100" height="100">
+                                    <circle class="progress-ring-bg" cx="50" cy="50" r="40" />
+                                    <circle class="progress-ring-fill" cx="50" cy="50" r="40" />
+                                </svg>
+                                <span class="value">95%</span>
+                            </div>
+                            <span class="label">GPU</span>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="circular-mini" data-value="12">
+                                <svg class="progress-ring-mini" width="100" height="100">
+                                    <circle class="progress-ring-bg" cx="50" cy="50" r="40" />
+                                    <circle class="progress-ring-fill" cx="50" cy="50" r="40" />
+                                </svg>
+                                <span class="value">12%</span>
+                            </div>
+                            <span class="label">CPU</span>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="circular-mini" data-value="12">
+                                <svg class="progress-ring-mini" width="100" height="100">
+                                    <circle class="progress-ring-bg" cx="50" cy="50" r="40" />
+                                    <circle class="progress-ring-fill" cx="50" cy="50" r="40" />
+                                </svg>
+                                <span class="value">12%</span>
+                            </div>
+                            <span class="label">Memory</span>
+                        </div>
+                    </div>
+                    <canvas id="gpuChart1" height="150"></canvas>
+                </div>
+            </div>
+
+            <!-- Window 2: Scene Tracking -->
+            <div class="window-card" id="window-scene">
+                <div class="window-header">
+                    <h3>AI Forge Studio</h3>
+                    <span class="window-subtitle">Scene Tracking Constantly</span>
+                    <div class="window-controls">
+                        <button class="win-btn minimize">─</button>
+                        <button class="win-btn maximize">□</button>
+                        <button class="win-btn close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="code-section">
+                        <div class="code-line">├─ initializing tensorflow backend...</div>
+                        <div class="code-line">├─ loading model checkpoint v3.2...</div>
+                        <div class="code-line">├─ allocated 8GB VRAM for inference</div>
+                        <div class="code-line">├─ CUDA compute capability: 8.9</div>
+                        <div class="code-line success">└─ Model loaded successfully</div>
+                    </div>
+                    <canvas id="sceneChart" height="120"></canvas>
+                </div>
+            </div>
+
+            <!-- Window 3: Training Studio -->
+            <div class="window-card" id="window-training">
+                <div class="window-header">
+                    <h3>AI Training Studio</h3>
+                    <span class="window-subtitle">Scene Tracking Constantly</span>
+                    <div class="window-controls">
+                        <button class="win-btn minimize">─</button>
+                        <button class="win-btn maximize">□</button>
+                        <button class="win-btn close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="dual-progress">
+                        <div class="progress-section">
+                            <div class="circular-mini large" data-value="85">
+                                <svg class="progress-ring-mini" width="140" height="140">
+                                    <circle class="progress-ring-bg" cx="70" cy="70" r="60" />
+                                    <circle class="progress-ring-fill" cx="70" cy="70" r="60" />
+                                </svg>
+                                <span class="value">85%</span>
+                            </div>
+                            <div class="progress-details">
+                                <p>Train Accuracy</p>
+                                <p>Loss: 0.0421</p>
+                            </div>
+                        </div>
+                        <div class="progress-section">
+                            <div class="circular-mini large" data-value="78">
+                                <svg class="progress-ring-mini" width="140" height="140">
+                                    <circle class="progress-ring-bg" cx="70" cy="70" r="60" />
+                                    <circle class="progress-ring-fill" cx="70" cy="70" r="60" />
+                                </svg>
+                                <span class="value">78%</span>
+                            </div>
+                            <div class="progress-details">
+                                <p>Validation Accuracy</p>
+                                <p>Loss: 0.0982</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Window 4: Performance Dashboard -->
+            <div class="window-card large-card" id="window-performance">
+                <div class="window-header">
+                    <h3>AI Forge Studio</h3>
+                    <span class="window-subtitle">Performance Dashboard</span>
+                    <div class="window-controls">
+                        <button class="win-btn minimize">─</button>
+                        <button class="win-btn maximize">□</button>
+                        <button class="win-btn close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="sidebar-menu">
+                        <div class="menu-item active">📊 Main Dashboard</div>
+                        <div class="menu-item">💻 System Monitor</div>
+                        <div class="menu-item">🎯 Training Status</div>
+                        <div class="menu-item">🔧 Settings</div>
+                        <div class="menu-item">⚡ GPU Metrics</div>
+                        <div class="menu-item">📈 Analytics</div>
+                        <div class="menu-item">🧠 Models</div>
+                        <div class="menu-item">💾 Data Storage</div>
+                    </div>
+                    <div class="main-content-area">
+                        <div class="performance-grid">
+                            <div class="perf-stat">
+                                <span class="perf-label">Current GPU Usage</span>
+                                <span class="perf-value">95%</span>
+                                <div class="perf-bar">
+                                    <div class="perf-bar-fill" style="width: 95%"></div>
+                                </div>
+                            </div>
+                            <div class="perf-stat">
+                                <span class="perf-label">Current CPU Usage</span>
+                                <span class="perf-value">12%</span>
+                                <div class="perf-bar">
+                                    <div class="perf-bar-fill" style="width: 12%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <canvas id="perfChart" height="180"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Window 5: Cloud Interface -->
+            <div class="window-card" id="window-cloud">
+                <div class="window-header">
+                    <h3>AI Cloudl Bastel Werer</h3>
+                    <span class="window-subtitle">Cloud Services</span>
+                    <div class="window-controls">
+                        <button class="win-btn minimize">─</button>
+                        <button class="win-btn maximize">□</button>
+                        <button class="win-btn close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="cloud-section">
+                        <h4>Cloudflare Workers Status</h4>
+                        <div class="circular-mini center" data-value="95">
+                            <svg class="progress-ring-mini" width="120" height="120">
+                                <circle class="progress-ring-bg" cx="60" cy="60" r="50" />
+                                <circle class="progress-ring-fill" cx="60" cy="60" r="50" />
+                            </svg>
+                            <span class="value">95%</span>
+                        </div>
+                        <p class="cloud-status">Deploying to Cloudflare</p>
+                    </div>
+                    <div class="api-list">
+                        <div class="api-item">
+                            <span class="api-status online">●</span>
+                            <span>API Endpoint 1</span>
+                            <span class="badge-mini online">Online</span>
+                        </div>
+                        <div class="api-item">
+                            <span class="api-status online">●</span>
+                            <span>API Endpoint 2</span>
+                            <span class="badge-mini online">Online</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Window 6: System Info -->
+            <div class="window-card" id="window-info">
+                <div class="window-header">
+                    <h3>AI Infomase Synker</h3>
+                    <span class="window-subtitle">System API</span>
+                    <div class="window-controls">
+                        <button class="win-btn minimize">─</button>
+                        <button class="win-btn maximize">□</button>
+                        <button class="win-btn close">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="info-table">
+                        <div class="info-row">
+                            <span class="info-label">CUDA Version:</span>
+                            <span class="info-value success">12.4</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">TensorRT:</span>
+                            <span class="info-value success">10.14.1</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Vulkan SDK:</span>
+                            <span class="info-value success">1.4.328.1</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">VRAM:</span>
+                            <span class="info-value">32GB GDDR7</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Compute:</span>
+                            <span class="info-value">8.9 (Ada)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/multi-dashboard.js"></script>
+</body>
+</html>

@@ -35,17 +35,29 @@
                 </div>
             </div>
             <nav class="main-nav">
-                <button class="nav-btn active" data-view="main">
+                <button class="nav-btn active">
                     <span class="icon">🏠</span>
                     <span>الرئيسية</span>
                 </button>
-                <button class="nav-btn" data-view="dashboard">
+                <button class="nav-btn" onclick="window.location.href='dashboard.html'">
                     <span class="icon">📊</span>
                     <span>لوحة التحكم</span>
                 </button>
-                <button class="nav-btn" data-view="settings">
-                    <span class="icon">⚙️</span>
-                    <span>الإعدادات</span>
+                <button class="nav-btn" onclick="window.location.href='cuda-integration.html'">
+                    <span class="icon">⚡</span>
+                    <span>CUDA</span>
+                </button>
+                <button class="nav-btn" onclick="window.location.href='tensorrt.html'">
+                    <span class="icon">🧠</span>
+                    <span>TensorRT</span>
+                </button>
+                <button class="nav-btn" onclick="window.location.href='vulkan.html'">
+                    <span class="icon">🎮</span>
+                    <span>Vulkan</span>
+                </button>
+                <button class="nav-btn" onclick="window.location.href='inference.html'">
+                    <span class="icon">🚀</span>
+                    <span>Inference</span>
                 </button>
                 <button class="search-btn">
                     <span class="icon">🔍</span>
@@ -67,12 +79,12 @@
                     <div class="gpu-visualization">
                         <canvas id="gpuCanvas"></canvas>
                         <div class="gpu-info">
-                            <div class="info-line success">[INFO] CUDA 12.0 initialized</div>
-                            <div class="info-line success">[INFO] CUDA 1.9 initialized. Device: NVIDIA GeForce RTX 4000</div>
-                            <div class="info-line success">[INFO] TensorFlow is ready</div>
-                            <div class="info-line success">[INFO] TensorRT 8.6 engine loaded</div>
-                            <div class="info-line warning">Cornbde 38 1033 4enna</div>
-                            <div class="info-line info">[TRENDERRER] Vulkan 1.3 frame time: 3.5ms 3.5ms</div>
+                            <div class="info-line success">[INFO] CUDA 12.4 initialized</div>
+                            <div class="info-line success">[INFO] Vulkan 1.4.328.1 initialized. Device: NVIDIA GeForce RTX 5090</div>
+                            <div class="info-line success">[INFO] TensorRT 10.14.1.48 engine loaded</div>
+                            <div class="info-line success">[INFO] TensorRT inference engine ready</div>
+                            <div class="info-line warning">Compute 89 (Ada Lovelace Architecture)</div>
+                            <div class="info-line info">[RENDERER] Vulkan 1.4 frame time: 2.1ms | FPS: 476</div>
                         </div>
                     </div>
                 </div>
@@ -94,7 +106,7 @@
                                 </svg>
                                 <div class="progress-value">
                                     <span class="value">95%</span>
-                                    <span class="label">893%</span>
+                                    <span class="label">VRAM</span>
                                 </div>
                             </div>
                             <h3>Current GPU Usage</h3>
@@ -107,7 +119,7 @@
                                 </svg>
                                 <div class="progress-value">
                                     <span class="value">12%</span>
-                                    <span class="label">5TJ</span>
+                                    <span class="label">CPU</span>
                                 </div>
                             </div>
                             <h3>CPU Usage</h3>
@@ -124,13 +136,13 @@
                             </svg>
                         </div>
                         <div class="gpu-specs">
-                            <p>🔹 ITRAX1030383</p>
-                            <p>🔹 CRULA Azure Instance 59 (8003)</p>
-                            <p>🔹 VRAM 28GB / 24.8.8.0 J</p>
-                            <p>🔹 Conversion Version: 33.360Item</p>
-                            <p>🔹 Vestiren: 6.8.0</p>
+                            <p>🔹 NVIDIA GeForce RTX 5090</p>
+                            <p>🔹 CUDA Cores: 21,760 | Tensor Cores: 680</p>
+                            <p>🔹 VRAM: 32GB GDDR7</p>
+                            <p>🔹 CUDA Version: 12.4</p>
+                            <p>🔹 Driver Version: 566.03</p>
                         </div>
-                        <p class="deploy-note">Deploy to Cloudifrrents</p>
+                        <p class="deploy-note">Ready for AI Inference</p>
                     </div>
                 </div>
             </section>
@@ -142,7 +154,7 @@
                     <button class="panel-action">⚙️</button>
                 </div>
                 <div class="panel-content">
-                    <h3>Loss & Reducations</h3>
+                    <h3>Loss & Reductions</h3>
                     <div class="chart-container">
                         <canvas id="lossChart"></canvas>
                     </div>
@@ -151,7 +163,7 @@
                     <div class="output-options">
                         <label class="radio-option">
                             <input type="radio" name="output" value="local" checked>
-                            <span>Soad</span>
+                            <span>Local</span>
                         </label>
                         <label class="radio-option">
                             <input type="radio" name="output" value="cloud">
@@ -169,10 +181,12 @@
                 </div>
                 <div class="panel-content">
                     <div class="code-display">
-                        <pre><code><span class="code-comment">;; code goes here ;;</span>
-<span class="code-keyword">{</span>    <span class="code-function">(define fonster (te he; [({( sk )</span>
-    <span class="code-bracket">(</span><span class="code-special">cons</span> <span class="code-variable">KserbkeF.</span> <span class="code-operator">s</span> <span class="code-value">enil</span> <span class="code-value">l:8ScirfetsFisit</span><span class="code-bracket">(</span><span class="code-operator">==</span><span class="code-bracket">)</span><span class="code-bracket">)</span><span class="code-punctuation">.</span>
-    <span class="code-bracket">}</span><span class="code-bracket">)</span><span class="code-bracket">;</span> <span class="code-bracket">}</span></code></pre>
+                        <pre><code><span class="code-comment">// Neural Network Inference with TensorRT</span>
+<span class="code-keyword">void</span> <span class="code-function">runInference</span>() <span class="code-bracket">{</span>
+    <span class="code-keyword">auto</span> <span class="code-variable">engine</span> = <span class="code-function">loadEngine</span>(<span class="code-value">"model.trt"</span>);
+    <span class="code-keyword">auto</span> <span class="code-variable">context</span> = <span class="code-variable">engine</span>-><span class="code-function">createExecutionContext</span>();
+    <span class="code-function">processInput</span>(<span class="code-variable">context</span>);
+<span class="code-bracket">}</span></code></pre>
                     </div>
                 </div>
             </section>
@@ -187,19 +201,19 @@
                     <div class="terminal-output">
                         <div class="terminal-line">
                             <span class="prompt">▶</span>
-                            <span class="command">Konsoli lloe klse Automaattikeskus</span>
+                            <span class="command">Building AI Forge Studio with TensorRT...</span>
                         </div>
                         <div class="terminal-line">
                             <span class="icon-info">📘</span>
-                            <span class="text">cmmae —build L. 8. SSE-AiForges AITorg: 289.19)</span>
+                            <span class="text">cmake --build . --config Release -j16</span>
                         </div>
                         <div class="terminal-line indent">
                             <span class="icon-arrow">▶ ▶</span>
-                            <span class="text">(100% Termisca-faller! kairrs Ide e Nokeurge rnismistu.kte:ol:6$11.Teteine.)</span>
+                            <span class="text">[100%] Building CXX object src/inference_engine.cpp</span>
                         </div>
                         <div class="terminal-line">
                             <span class="icon-win">⊞</span>
-                            <span class="text">cmmae —build L. - rondid L. . config Release</span>
+                            <span class="text">Build completed successfully - Release configuration</span>
                         </div>
                         <div class="info-indicator">
                             <span class="info-icon">ⓘ</span>

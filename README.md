@@ -8,9 +8,9 @@
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
-**واجهة مستخدم احترافية متقدمة لمراقبة الأنظمة والتدريب على الذكاء الاصطناعي**
+**منصة احترافية متقدمة لتشغيل نماذج الذكاء الاصطناعي على RTX 5090 مع دعم CUDA و TensorRT و Vulkan SDK**
 
-[المعاينة المباشرة](#) | [التوثيق](#features) | [البدء السريع](#quick-start)
+[المعاينة المباشرة](https://aiforgestudio.net) | [التوثيق](#features) | [دليل C++/Qt](CPP-Qt-Integration-Guide.md)
 
 </div>
 
@@ -31,10 +31,11 @@
 - **Real-time Monitoring** - مراقبة في الوقت الفعلي للنظام
 
 ### 🔧 أدوات تطوير متقدمة
-- **Code Editor Panel** - عرض الأكواد مع Syntax Highlighting
-- **Terminal Output** - محاكاة Terminal للأوامر
-- **Build Console** - متابعة عملية البناء
-- **API Interface** - إدارة نقاط API و Workers
+- **CUDA Integration** - دعم كامل لـ CUDA 12.4 مع أمثلة برمجية
+- **TensorRT Engine** - تحويل وتحسين النماذج للحصول على أعلى أداء
+- **Vulkan SDK** - تسريع الرسومات والحسابات باستخدام Vulkan
+- **Model Inference** - واجهة تفاعلية لتشغيل النماذج المختلفة
+- **C++/Qt Application** - تطبيق سطح مكتب متكامل
 
 ### ⚡ أداء عالي
 - **Optimized Canvas** - رسومات Canvas محسّنة
@@ -69,15 +70,23 @@ start index.html
 
 ```
 ai-forge-studio-site/
-├── index.html              # الصفحة الرئيسية
-├── dashboard.html          # لوحة التحكم الكاملة
+├── index.html                      # الصفحة الرئيسية
+├── dashboard.html                  # لوحة التحكم الكاملة
+├── cuda-integration.html           # صفحة CUDA
+├── tensorrt.html                   # صفحة TensorRT
+├── vulkan.html                     # صفحة Vulkan SDK
+├── inference.html                  # صفحة Model Inference
+├── CPP-Qt-Integration-Guide.md     # دليل C++/Qt الشامل
 ├── css/
-│   ├── style.css          # التنسيقات الرئيسية
-│   └── dashboard.css      # تنسيقات Dashboard
+│   ├── style.css                   # التنسيقات الرئيسية
+│   └── dashboard.css               # تنسيقات Dashboard
 ├── js/
-│   ├── app.js             # الوظائف الرئيسية
-│   └── dashboard.js       # وظائف Dashboard
-└── assets/                # الصور والموارد
+│   ├── app.js                      # الوظائف الرئيسية
+│   ├── interactive.js              # النظام التفاعلي
+│   ├── cuda-integration.js         # وظائف CUDA
+│   ├── tensorrt.js                 # وظائف TensorRT
+│   └── inference.js                # محرك الاستدلال
+└── README.md                       # هذا الملف
 ```
 
 ---
@@ -238,9 +247,9 @@ monitor.startMonitoring();
 
 هل لديك سؤال أو اقتراح؟ تواصل معنا:
 
-- 📧 Email: your.email@example.com
-- 🐦 Twitter: [@yourusername](https://twitter.com/yourusername)
-- 💼 LinkedIn: [Your Name](https://linkedin.com/in/yourname)
+- 🌐 Website: [https://aiforgestudio.net](https://aiforgestudio.net)
+- 💻 GitHub: [@QAZ83](https://github.com/QAZ83)
+- 📚 Documentation: [CPP-Qt-Integration-Guide.md](CPP-Qt-Integration-Guide.md)
 
 ---
 

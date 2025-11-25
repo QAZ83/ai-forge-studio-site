@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Forge Studio - Project Omega</title>
+    <meta name="description" content="Professional AI Development Environment with GPU Acceleration - CUDA, TensorRT, Vulkan Support">
+    <meta name="theme-color" content="#00d9ff">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" href="/assets/icon-192x192.png">
+    <link rel="apple-touch-icon" href="/assets/icon-192x192.png">
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -62,7 +67,10 @@
                 <button class="search-btn">
                     <span class="icon">🔍</span>
                 </button>
-                <button class="load-btn">تحميل</button>
+                <button class="load-btn" onclick="window.location.href='download.html'">
+                    <span class="icon">⬇️</span>
+                    <span>تحميل التطبيق</span>
+                </button>
                 <button class="terminal-btn">Terminal</button>
             </nav>
         </header>
@@ -226,8 +234,47 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/i18n.js"></script>
     <script src="js/app.js"></script>
     <script src="js/interactive.js"></script>
     <script src="js/code-editor.js"></script>
+
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registered:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Show install button (you can customize this)
+            const installBtn = document.createElement('button');
+            installBtn.className = 'install-pwa-btn';
+            installBtn.innerHTML = '<span>📱</span> تثبيت التطبيق';
+            installBtn.onclick = async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response: ${outcome}`);
+                    deferredPrompt = null;
+                    installBtn.remove();
+                }
+            };
+
+            document.querySelector('.main-nav').appendChild(installBtn);
+        });
+    </script>
 </body>
 </html>

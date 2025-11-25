@@ -1,0 +1,151 @@
+{
+  "name": "AI Forge Studio",
+  "short_name": "AI Forge",
+  "description": "Professional AI Development Environment with GPU Acceleration - CUDA, TensorRT, Vulkan Support",
+  "version": "1.0.0",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#00d9ff",
+  "orientation": "any",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "/assets/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/screenshot-wide.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "AI Forge Studio Dashboard"
+    },
+    {
+      "src": "/assets/screenshot-mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "AI Forge Studio Mobile"
+    }
+  ],
+  "categories": [
+    "developer tools",
+    "productivity",
+    "education",
+    "ai",
+    "machine learning"
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Open Performance Dashboard",
+      "url": "/dashboard.html",
+      "icons": [
+        {
+          "src": "/assets/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "CUDA Integration",
+      "short_name": "CUDA",
+      "description": "Open CUDA Development",
+      "url": "/cuda-integration.html",
+      "icons": [
+        {
+          "src": "/assets/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "TensorRT",
+      "short_name": "TensorRT",
+      "description": "Open TensorRT Engine",
+      "url": "/tensorrt.html",
+      "icons": [
+        {
+          "src": "/assets/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "windows",
+      "url": "https://aiforgestudio.net/download/windows"
+    },
+    {
+      "platform": "macos",
+      "url": "https://aiforgestudio.net/download/mac"
+    },
+    {
+      "platform": "linux",
+      "url": "https://aiforgestudio.net/download/linux"
+    }
+  ],
+  "prefer_related_applications": false,
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "features": [
+    "GPU Acceleration",
+    "CUDA Support",
+    "TensorRT Integration",
+    "Vulkan Rendering",
+    "Real-time Inference",
+    "Model Training",
+    "Code Editor",
+    "Performance Monitoring"
+  ]
+}

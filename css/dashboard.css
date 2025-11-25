@@ -7,6 +7,10 @@
     grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-md);
     grid-auto-rows: minmax(300px, auto);
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 10px;
 }
 
 .wide-panel {
@@ -15,6 +19,8 @@
 
 .tall-panel {
     grid-row: span 2;
+    max-height: 800px;
+    overflow-y: auto;
 }
 
 /* Metrics Grid */

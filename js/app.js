@@ -20,13 +20,18 @@ class GPUVisualization {
         this.connections = [];
         this.time = 0;
 
+        // Performance optimization: FPS limiting
+        this.fps = 30; // Limit to 30 FPS instead of 60
+        this.fpsInterval = 1000 / this.fps;
+        this.then = Date.now();
+
         this.init();
         this.animate();
     }
 
     init() {
-        // Create 3D network nodes
-        const nodeCount = 80;
+        // Create 3D network nodes - Optimized count for better performance
+        const nodeCount = 35; // Reduced from 80 to 35 for better performance
         for (let i = 0; i < nodeCount; i++) {
             this.nodes.push({
                 x: Math.random() * this.width,
@@ -111,15 +116,24 @@ class GPUVisualization {
     }
 
     animate() {
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-        this.ctx.fillRect(0, 0, this.width, this.height);
-
-        this.updateNodes();
-        this.drawConnections();
-        this.drawNodes();
-
-        this.time += 0.01;
         requestAnimationFrame(() => this.animate());
+
+        // FPS limiting for better performance
+        const now = Date.now();
+        const elapsed = now - this.then;
+
+        if (elapsed > this.fpsInterval) {
+            this.then = now - (elapsed % this.fpsInterval);
+
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+
+            this.updateNodes();
+            this.drawConnections();
+            this.drawNodes();
+
+            this.time += 0.01;
+        }
     }
 }
 
@@ -145,11 +159,15 @@ function animateCircularProgress() {
 }
 
 // ===================================
-// Loss Chart
+// Loss Chart with Lazy Loading
 // ===================================
 function createLossChart() {
     const ctx = document.getElementById('lossChart');
     if (!ctx) return;
+
+    // Check if chart is already created
+    if (ctx.dataset.chartCreated === 'true') return;
+    ctx.dataset.chartCreated = 'true';
 
     // Generate realistic training data
     const epochs = 90;
@@ -374,30 +392,66 @@ function addInteractiveEffects() {
 }
 
 // ===================================
+// Lazy Loading with Intersection Observer
+// ===================================
+function setupLazyLoading() {
+    const observerOptions = {
+        root: null,
+        rootMargin: '50px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = entry.target;
+
+                // Load charts when they come into view
+                if (target.id === 'lossChart' && !target.dataset.chartCreated) {
+                    setTimeout(() => createLossChart(), 100);
+                }
+
+                observer.unobserve(target);
+            }
+        });
+    }, observerOptions);
+
+    // Observe chart canvases
+    const lossChart = document.getElementById('lossChart');
+    if (lossChart) observer.observe(lossChart);
+}
+
+// ===================================
 // Initialization
 // ===================================
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 AI Forge Studio Initializing...');
 
-    // Initialize GPU Visualization
-    const gpuViz = new GPUVisualization('gpuCanvas');
-    console.log('✅ GPU Visualization loaded');
+    // Setup lazy loading first
+    setupLazyLoading();
+    console.log('✅ Lazy loading configured');
+
+    // Initialize GPU Visualization with slight delay
+    setTimeout(() => {
+        const gpuViz = new GPUVisualization('gpuCanvas');
+        console.log('✅ GPU Visualization loaded');
+    }, 100);
 
     // Animate circular progress
-    animateCircularProgress();
-    console.log('✅ Progress indicators animated');
-
-    // Create loss chart
-    createLossChart();
-    console.log('✅ Loss chart created');
+    setTimeout(() => {
+        animateCircularProgress();
+        console.log('✅ Progress indicators animated');
+    }, 200);
 
     // Setup navigation
     setupNavigation();
     console.log('✅ Navigation setup complete');
 
-    // Start system monitoring
-    const monitor = new SystemMonitor();
-    console.log('✅ System monitoring active');
+    // Start system monitoring with delay
+    setTimeout(() => {
+        const monitor = new SystemMonitor();
+        console.log('✅ System monitoring active');
+    }, 300);
 
     // Add interactive effects
     addInteractiveEffects();

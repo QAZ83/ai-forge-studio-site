@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TensorRT Integration - AI Forge Studio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="circuit-background"></div>
+
+    <div class="main-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40">
+                        <defs>
+                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0099ff;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M20 5 L35 15 L35 25 L20 35 L5 25 L5 15 Z" fill="url(#logoGradient)" opacity="0.2"/>
+                        <path d="M20 8 L32 16 L32 24 L20 32 L8 24 L8 16 Z" stroke="url(#logoGradient)" stroke-width="2" fill="none"/>
+                        <circle cx="20" cy="20" r="5" fill="url(#logoGradient)"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>AI Forge Studio</h1>
+                    <p class="subtitle">TensorRT Integration</p>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <button class="nav-btn" data-page="index">
+                    <span class="icon">🏠</span>
+                    <span>الرئيسية</span>
+                </button>
+                <button class="nav-btn" data-page="dashboard">
+                    <span class="icon">📊</span>
+                    <span>لوحة التحكم</span>
+                </button>
+                <button class="nav-btn" data-page="cuda">
+                    <span class="icon">⚡</span>
+                    <span>CUDA</span>
+                </button>
+                <button class="nav-btn active" data-page="tensorrt">
+                    <span class="icon">🧠</span>
+                    <span>TensorRT</span>
+                </button>
+                <button class="nav-btn" data-page="vulkan">
+                    <span class="icon">🎮</span>
+                    <span>Vulkan</span>
+                </button>
+                <button class="nav-btn" data-page="inference">
+                    <span class="icon">🚀</span>
+                    <span>Inference</span>
+                </button>
+                <button class="search-btn">
+                    <span class="icon">🔍</span>
+                </button>
+                <button class="terminal-btn">Terminal</button>
+            </nav>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- TensorRT Status -->
+            <section class="panel wide-panel">
+                <div class="panel-header">
+                    <h2>🧠 TensorRT Engine Status</h2>
+                    <button class="panel-action" onclick="refreshTensorRT()">🔄</button>
+                </div>
+                <div class="panel-content">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon">✅</div>
+                            <div class="metric-info">
+                                <h3>TensorRT Version</h3>
+                                <p class="metric-value">10.14.1.48</p>
+                                <p class="metric-change positive">Latest</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">🎯</div>
+                            <div class="metric-info">
+                                <h3>Precision Mode</h3>
+                                <p class="metric-value">FP16</p>
+                                <p class="metric-change positive">Tensor Cores</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">⚡</div>
+                            <div class="metric-info">
+                                <h3>Inference Speed</h3>
+                                <p class="metric-value">2.1 ms</p>
+                                <p class="metric-change positive">476 FPS</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">📦</div>
+                            <div class="metric-info">
+                                <h3>Loaded Models</h3>
+                                <p class="metric-value">3</p>
+                                <p class="metric-change neutral">Active</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Model Manager -->
+            <section class="panel tall-panel">
+                <div class="panel-header">
+                    <h2>📦 Model Manager</h2>
+                    <button class="panel-action" onclick="uploadModel()">📤 Upload</button>
+                </div>
+                <div class="panel-content">
+                    <h3>Loaded Models</h3>
+                    <div class="status-list" id="model-list">
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <div style="flex: 1;">
+                                <div style="color: #00ffcc; font-weight: 600;">ResNet-50 (ONNX)</div>
+                                <div style="color: #8b95a8; font-size: 13px;">FP16 | 97MB | 2.1ms latency</div>
+                            </div>
+                            <button onclick="runModel('resnet50')" style="background: #00d9ff; border: none; color: #000; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-weight: 600;">Run</button>
+                        </div>
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <div style="flex: 1;">
+                                <div style="color: #00ffcc; font-weight: 600;">YOLO v8 (TensorRT)</div>
+                                <div style="color: #8b95a8; font-size: 13px;">INT8 | 145MB | 3.5ms latency</div>
+                            </div>
+                            <button onclick="runModel('yolov8')" style="background: #00d9ff; border: none; color: #000; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-weight: 600;">Run</button>
+                        </div>
+                        <div class="status-item pending">
+                            <span class="status-dot"></span>
+                            <div style="flex: 1;">
+                                <div style="color: #00ffcc; font-weight: 600;">Llama 3.1 (70B)</div>
+                                <div style="color: #8b95a8; font-size: 13px;">FP16 | 128GB | Loading...</div>
+                            </div>
+                            <button disabled style="background: #333; border: none; color: #666; padding: 5px 15px; border-radius: 4px; cursor: not-allowed; font-weight: 600;">Loading</button>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 2rem;">Model Conversion</h3>
+                    <div style="background: rgba(0, 217, 255, 0.05); border-radius: 8px; padding: 15px; margin-top: 10px;">
+                        <label style="color: #8b95a8; font-size: 13px;">Model Type:</label>
+                        <select id="model-type" style="width: 100%; padding: 10px; background: rgba(0, 0, 0, 0.5); border: 1px solid #00d9ff; border-radius: 4px; color: #fff; margin: 10px 0;">
+                            <option>ONNX Model</option>
+                            <option>PyTorch Model</option>
+                            <option>TensorFlow Model</option>
+                            <option>Caffe Model</option>
+                        </select>
+
+                        <label style="color: #8b95a8; font-size: 13px;">Precision:</label>
+                        <select id="precision" style="width: 100%; padding: 10px; background: rgba(0, 0, 0, 0.5); border: 1px solid #00d9ff; border-radius: 4px; color: #fff; margin: 10px 0;">
+                            <option>FP32 (Full Precision)</option>
+                            <option selected>FP16 (Tensor Cores)</option>
+                            <option>INT8 (Quantized)</option>
+                            <option>INT4 (Ultra Fast)</option>
+                        </select>
+
+                        <button onclick="convertModel()" class="action-button primary" style="width: 100%; margin-top: 10px;">
+                            🔄 Convert to TensorRT
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Metrics -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📈 Performance Metrics</h2>
+                    <button class="panel-action">⚙️</button>
+                </div>
+                <div class="panel-content">
+                    <canvas id="tensorrtPerformanceChart" height="200"></canvas>
+                    <div style="margin-top: 1.5rem;">
+                        <div class="stat-row">
+                            <span class="stat-label">Average Latency:</span>
+                            <span class="stat-value">2.3 ms</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Throughput:</span>
+                            <span class="stat-value">434 images/sec</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">VRAM Usage:</span>
+                            <span class="stat-value">8.5 GB</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TensorRT Code Example -->
+            <section class="panel tall-panel">
+                <div class="panel-header">
+                    <h2>💻 TensorRT C++ Example</h2>
+                    <button class="panel-action" onclick="copyTRTCode()">📋 Copy</button>
+                </div>
+                <div class="panel-content">
+                    <div class="env-tabs">
+                        <button class="env-tab active" onclick="showTRTTab('inference')">Inference</button>
+                        <button class="env-tab" onclick="showTRTTab('builder')">Engine Builder</button>
+                        <button class="env-tab" onclick="showTRTTab('int8')">INT8 Calibration</button>
+                    </div>
+                    <div class="code-display" id="trt-inference-code">
+                        <pre><code><span class="code-comment">// TensorRT Inference Example</span>
+<span class="code-keyword">#include</span> <span class="code-value">&lt;NvInfer.h&gt;</span>
+<span class="code-keyword">#include</span> <span class="code-value">&lt;cuda_runtime.h&gt;</span>
+
+<span class="code-keyword">class</span> <span class="code-function">TRTInference</span> {
+<span class="code-keyword">public:</span>
+    <span class="code-keyword">void</span> <span class="code-function">loadEngine</span>(<span class="code-keyword">const</span> <span class="code-keyword">char</span>* <span class="code-variable">enginePath</span>) {
+        <span class="code-comment">// Load serialized engine</span>
+        <span class="code-variable">std::ifstream</span> <span class="code-variable">file</span>(<span class="code-variable">enginePath</span>, <span class="code-variable">std::ios::binary</span>);
+        <span class="code-variable">file</span>.<span class="code-function">seekg</span>(0, <span class="code-variable">std::ios::end</span>);
+        <span class="code-keyword">size_t</span> <span class="code-variable">size</span> = <span class="code-variable">file</span>.<span class="code-function">tellg</span>();
+
+        <span class="code-comment">// Deserialize engine</span>
+        <span class="code-variable">runtime</span> = <span class="code-function">createInferRuntime</span>(<span class="code-variable">logger</span>);
+        <span class="code-variable">engine</span> = <span class="code-variable">runtime</span>-><span class="code-function">deserializeCudaEngine</span>(<span class="code-variable">data</span>, <span class="code-variable">size</span>);
+        <span class="code-variable">context</span> = <span class="code-variable">engine</span>-><span class="code-function">createExecutionContext</span>();
+    }
+
+    <span class="code-keyword">void</span> <span class="code-function">infer</span>(<span class="code-keyword">float</span>* <span class="code-variable">input</span>, <span class="code-keyword">float</span>* <span class="code-variable">output</span>) {
+        <span class="code-comment">// Execute inference</span>
+        <span class="code-variable">context</span>-><span class="code-function">executeV2</span>(<span class="code-variable">buffers</span>);
+        <span class="code-function">cudaMemcpy</span>(<span class="code-variable">output</span>, <span class="code-variable">d_output</span>, <span class="code-variable">size</span>, <span class="code-variable">cudaMemcpyDeviceToHost</span>);
+    }
+};</code></pre>
+                    </div>
+                    <div class="code-display" id="trt-builder-code" style="display: none;">
+                        <pre><code><span class="code-comment">// TensorRT Engine Builder</span>
+<span class="code-keyword">void</span> <span class="code-function">buildEngine</span>(<span class="code-keyword">const</span> <span class="code-keyword">char</span>* <span class="code-variable">onnxPath</span>) {
+    <span class="code-keyword">auto</span> <span class="code-variable">builder</span> = <span class="code-function">createInferBuilder</span>(<span class="code-variable">logger</span>);
+    <span class="code-keyword">auto</span> <span class="code-variable">config</span> = <span class="code-variable">builder</span>-><span class="code-function">createBuilderConfig</span>();
+
+    <span class="code-comment">// Enable FP16 mode</span>
+    <span class="code-variable">config</span>-><span class="code-function">setFlag</span>(<span class="code-variable">BuilderFlag::kFP16</span>);
+
+    <span class="code-comment">// Set max workspace size</span>
+    <span class="code-variable">config</span>-><span class="code-function">setMemoryPoolLimit</span>(<span class="code-variable">MemoryPoolType::kWORKSPACE</span>, 1ULL << 30);
+
+    <span class="code-comment">// Parse ONNX model</span>
+    <span class="code-keyword">auto</span> <span class="code-variable">network</span> = <span class="code-variable">builder</span>-><span class="code-function">createNetworkV2</span>(1U);
+    <span class="code-keyword">auto</span> <span class="code-variable">parser</span> = <span class="code-function">createParser</span>(*<span class="code-variable">network</span>, <span class="code-variable">logger</span>);
+    <span class="code-variable">parser</span>-><span class="code-function">parseFromFile</span>(<span class="code-variable">onnxPath</span>);
+
+    <span class="code-comment">// Build engine</span>
+    <span class="code-keyword">auto</span> <span class="code-variable">engine</span> = <span class="code-variable">builder</span>-><span class="code-function">buildSerializedNetwork</span>(*<span class="code-variable">network</span>, *<span class="code-variable">config</span>);
+}</code></pre>
+                    </div>
+                    <div class="code-display" id="trt-int8-code" style="display: none;">
+                        <pre><code><span class="code-comment">// INT8 Calibration</span>
+<span class="code-keyword">class</span> <span class="code-function">Int8Calibrator</span> : <span class="code-keyword">public</span> <span class="code-variable">IInt8EntropyCalibrator2</span> {
+<span class="code-keyword">public:</span>
+    <span class="code-keyword">int</span> <span class="code-function">getBatchSize</span>() <span class="code-keyword">const</span> <span class="code-keyword">override</span> {
+        <span class="code-keyword">return</span> <span class="code-variable">batchSize</span>;
+    }
+
+    <span class="code-keyword">bool</span> <span class="code-function">getBatch</span>(<span class="code-keyword">void</span>* <span class="code-variable">bindings</span>[], <span class="code-keyword">const</span> <span class="code-keyword">char</span>* <span class="code-variable">names</span>[], <span class="code-keyword">int</span> <span class="code-variable">nbBindings</span>) <span class="code-keyword">override</span> {
+        <span class="code-comment">// Load calibration batch</span>
+        <span class="code-keyword">if</span> (<span class="code-variable">batchCount</span> >= <span class="code-variable">maxBatches</span>) <span class="code-keyword">return</span> <span class="code-keyword">false</span>;
+
+        <span class="code-comment">// Copy data to device</span>
+        <span class="code-function">cudaMemcpy</span>(<span class="code-variable">deviceInput</span>, <span class="code-variable">hostInput</span>, <span class="code-variable">size</span>, <span class="code-variable">cudaMemcpyHostToDevice</span>);
+        <span class="code-variable">bindings</span>[0] = <span class="code-variable">deviceInput</span>;
+        <span class="code-variable">batchCount</span>++;
+        <span class="code-keyword">return</span> <span class="code-keyword">true</span>;
+    }
+};</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Optimization Tips -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>💡 Optimization Tips</h2>
+                    <button class="panel-action">📖</button>
+                </div>
+                <div class="panel-content">
+                    <div class="status-list">
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Use FP16 for 2-3x faster inference on Tensor Cores</span>
+                        </div>
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text">INT8 quantization can provide 4x speedup with minimal accuracy loss</span>
+                        </div>
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Batch multiple inputs together for better GPU utilization</span>
+                        </div>
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Enable layer fusion during engine building</span>
+                        </div>
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Use CUDA streams for concurrent inference</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/interactive.js"></script>
+    <script src="js/tensorrt.js"></script>
+</body>
+</html>

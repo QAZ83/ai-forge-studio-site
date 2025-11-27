@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUDA Integration - AI Forge Studio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="circuit-background"></div>
+
+    <div class="main-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40">
+                        <defs>
+                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0099ff;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M20 5 L35 15 L35 25 L20 35 L5 25 L5 15 Z" fill="url(#logoGradient)" opacity="0.2"/>
+                        <path d="M20 8 L32 16 L32 24 L20 32 L8 24 L8 16 Z" stroke="url(#logoGradient)" stroke-width="2" fill="none"/>
+                        <circle cx="20" cy="20" r="5" fill="url(#logoGradient)"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>AI Forge Studio</h1>
+                    <p class="subtitle">CUDA Integration</p>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <button class="nav-btn" data-page="index">
+                    <span class="icon">🏠</span>
+                    <span>الرئيسية</span>
+                </button>
+                <button class="nav-btn" data-page="dashboard">
+                    <span class="icon">📊</span>
+                    <span>لوحة التحكم</span>
+                </button>
+                <button class="nav-btn active" data-page="cuda">
+                    <span class="icon">⚡</span>
+                    <span>CUDA</span>
+                </button>
+                <button class="nav-btn" data-page="tensorrt">
+                    <span class="icon">🧠</span>
+                    <span>TensorRT</span>
+                </button>
+                <button class="nav-btn" data-page="vulkan">
+                    <span class="icon">🎮</span>
+                    <span>Vulkan</span>
+                </button>
+                <button class="nav-btn" data-page="inference">
+                    <span class="icon">🚀</span>
+                    <span>Inference</span>
+                </button>
+                <button class="search-btn">
+                    <span class="icon">🔍</span>
+                </button>
+                <button class="terminal-btn">Terminal</button>
+            </nav>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- CUDA System Check -->
+            <section class="panel wide-panel">
+                <div class="panel-header">
+                    <h2>⚡ CUDA System Status</h2>
+                    <button class="panel-action" onclick="checkCudaSystem()">🔄 Refresh</button>
+                </div>
+                <div class="panel-content">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon">✅</div>
+                            <div class="metric-info">
+                                <h3>CUDA Version</h3>
+                                <p class="metric-value" id="cuda-version">12.4</p>
+                                <p class="metric-change positive">Latest</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">🎯</div>
+                            <div class="metric-info">
+                                <h3>Compute Capability</h3>
+                                <p class="metric-value">8.9</p>
+                                <p class="metric-change positive">Ada Lovelace</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">💻</div>
+                            <div class="metric-info">
+                                <h3>CUDA Cores</h3>
+                                <p class="metric-value">21,760</p>
+                                <p class="metric-change neutral">RTX 5090</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">⚙️</div>
+                            <div class="metric-info">
+                                <h3>Tensor Cores</h3>
+                                <p class="metric-value">680</p>
+                                <p class="metric-change positive">Gen 4</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CUDA Device Info -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>🖥️ Device Information</h2>
+                    <button class="panel-action">📋</button>
+                </div>
+                <div class="panel-content">
+                    <div class="status-list">
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text"><strong>Device Name:</strong> NVIDIA GeForce RTX 5090</span>
+                        </div>
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text"><strong>Driver Version:</strong> 566.03</span>
+                        </div>
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text"><strong>Total VRAM:</strong> 32GB GDDR7</span>
+                        </div>
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text"><strong>Memory Clock:</strong> 28 Gbps</span>
+                        </div>
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text"><strong>Memory Bus Width:</strong> 512-bit</span>
+                        </div>
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text"><strong>Max Threads per Block:</strong> 1024</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Memory Usage -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>💾 VRAM Usage Monitor</h2>
+                    <button class="panel-action">📊</button>
+                </div>
+                <div class="panel-content">
+                    <div class="tracking-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Used VRAM:</span>
+                            <span class="stat-value" id="vram-used">30.4 GB</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Free VRAM:</span>
+                            <span class="stat-value" id="vram-free">1.6 GB</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Usage:</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 95%" id="vram-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <canvas id="vramChart" height="200"></canvas>
+                </div>
+            </section>
+
+            <!-- CUDA Sample Code -->
+            <section class="panel tall-panel">
+                <div class="panel-header">
+                    <h2>💻 CUDA Implementation Example</h2>
+                    <button class="panel-action" onclick="copyCudaCode()">📋 Copy</button>
+                </div>
+                <div class="panel-content">
+                    <div class="env-tabs">
+                        <button class="env-tab active" onclick="showCudaTab('kernel')">CUDA Kernel</button>
+                        <button class="env-tab" onclick="showCudaTab('host')">Host Code</button>
+                        <button class="env-tab" onclick="showCudaTab('cmake')">CMakeLists.txt</button>
+                    </div>
+                    <div class="code-display" id="cuda-kernel-code">
+                        <pre><code><span class="code-comment">// CUDA Kernel for Matrix Multiplication</span>
+<span class="code-keyword">__global__</span> <span class="code-keyword">void</span> <span class="code-function">matrixMul</span>(<span class="code-keyword">float</span>* <span class="code-variable">A</span>, <span class="code-keyword">float</span>* <span class="code-variable">B</span>, <span class="code-keyword">float</span>* <span class="code-variable">C</span>, <span class="code-keyword">int</span> <span class="code-variable">N</span>) {
+    <span class="code-keyword">int</span> <span class="code-variable">row</span> = <span class="code-variable">blockIdx</span>.y * <span class="code-variable">blockDim</span>.y + <span class="code-variable">threadIdx</span>.y;
+    <span class="code-keyword">int</span> <span class="code-variable">col</span> = <span class="code-variable">blockIdx</span>.x * <span class="code-variable">blockDim</span>.x + <span class="code-variable">threadIdx</span>.x;
+
+    <span class="code-keyword">if</span> (<span class="code-variable">row</span> < <span class="code-variable">N</span> && <span class="code-variable">col</span> < <span class="code-variable">N</span>) {
+        <span class="code-keyword">float</span> <span class="code-variable">sum</span> = 0.0f;
+        <span class="code-keyword">for</span> (<span class="code-keyword">int</span> <span class="code-variable">k</span> = 0; <span class="code-variable">k</span> < <span class="code-variable">N</span>; <span class="code-variable">k</span>++) {
+            <span class="code-variable">sum</span> += <span class="code-variable">A</span>[<span class="code-variable">row</span> * <span class="code-variable">N</span> + <span class="code-variable">k</span>] * <span class="code-variable">B</span>[<span class="code-variable">k</span> * <span class="code-variable">N</span> + <span class="code-variable">col</span>];
+        }
+        <span class="code-variable">C</span>[<span class="code-variable">row</span> * <span class="code-variable">N</span> + <span class="code-variable">col</span>] = <span class="code-variable">sum</span>;
+    }
+}</code></pre>
+                    </div>
+                    <div class="code-display" id="cuda-host-code" style="display: none;">
+                        <pre><code><span class="code-comment">// Host Code - Main Application</span>
+<span class="code-keyword">#include</span> <span class="code-value">&lt;cuda_runtime.h&gt;</span>
+<span class="code-keyword">#include</span> <span class="code-value">&lt;iostream&gt;</span>
+
+<span class="code-keyword">int</span> <span class="code-function">main</span>() {
+    <span class="code-comment">// Set device</span>
+    <span class="code-function">cudaSetDevice</span>(0);
+
+    <span class="code-comment">// Allocate memory</span>
+    <span class="code-keyword">float</span>* <span class="code-variable">d_A</span>, *<span class="code-variable">d_B</span>, *<span class="code-variable">d_C</span>;
+    <span class="code-keyword">int</span> <span class="code-variable">size</span> = <span class="code-variable">N</span> * <span class="code-variable">N</span> * <span class="code-keyword">sizeof</span>(<span class="code-keyword">float</span>);
+
+    <span class="code-function">cudaMalloc</span>(&<span class="code-variable">d_A</span>, <span class="code-variable">size</span>);
+    <span class="code-function">cudaMalloc</span>(&<span class="code-variable">d_B</span>, <span class="code-variable">size</span>);
+    <span class="code-function">cudaMalloc</span>(&<span class="code-variable">d_C</span>, <span class="code-variable">size</span>);
+
+    <span class="code-comment">// Launch kernel</span>
+    <span class="code-keyword">dim3</span> <span class="code-variable">blockDim</span>(16, 16);
+    <span class="code-keyword">dim3</span> <span class="code-variable">gridDim</span>((<span class="code-variable">N</span> + 15) / 16, (<span class="code-variable">N</span> + 15) / 16);
+    <span class="code-function">matrixMul</span><<<span class="code-variable">gridDim</span>, <span class="code-variable">blockDim</span>>>(<span class="code-variable">d_A</span>, <span class="code-variable">d_B</span>, <span class="code-variable">d_C</span>, <span class="code-variable">N</span>);
+
+    <span class="code-function">cudaDeviceSynchronize</span>();
+    <span class="code-keyword">return</span> 0;
+}</code></pre>
+                    </div>
+                    <div class="code-display" id="cuda-cmake-code" style="display: none;">
+                        <pre><code><span class="code-comment"># CMakeLists.txt for CUDA Project</span>
+<span class="code-function">cmake_minimum_required</span>(<span class="code-variable">VERSION</span> 3.18)
+<span class="code-function">project</span>(<span class="code-variable">AIForgeStudio</span> LANGUAGES CXX CUDA)
+
+<span class="code-function">find_package</span>(<span class="code-variable">CUDA</span> 12.4 REQUIRED)
+
+<span class="code-function">add_executable</span>(<span class="code-variable">inference</span>
+    src/main.cpp
+    src/cuda_kernel.cu
+)
+
+<span class="code-function">target_compile_features</span>(<span class="code-variable">inference</span> <span class="code-variable">PRIVATE</span> cxx_std_17)
+<span class="code-function">set_target_properties</span>(<span class="code-variable">inference</span> <span class="code-variable">PROPERTIES</span> CUDA_SEPARABLE_COMPILATION ON)</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Metrics -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>⚡ Performance Metrics</h2>
+                    <button class="panel-action">📈</button>
+                </div>
+                <div class="panel-content">
+                    <canvas id="cudaPerformanceChart" height="250"></canvas>
+                    <div class="metrics-grid" style="margin-top: 1.5rem;">
+                        <div class="metric-card">
+                            <div class="metric-info">
+                                <h3>Kernel Execution Time</h3>
+                                <p class="metric-value">2.3 ms</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-info">
+                                <h3>Throughput</h3>
+                                <p class="metric-value">435 GFLOPS</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>🚀 Quick Actions</h2>
+                    <button class="panel-action">⚙️</button>
+                </div>
+                <div class="panel-content">
+                    <button class="action-button primary" onclick="runCudaTest()" style="width: 100%; margin-bottom: 10px;">
+                        🧪 Run CUDA Test
+                    </button>
+                    <button class="action-button primary" onclick="benchmarkGPU()" style="width: 100%; margin-bottom: 10px;">
+                        📊 Benchmark GPU
+                    </button>
+                    <button class="action-button primary" onclick="checkCompatibility()" style="width: 100%; margin-bottom: 10px;">
+                        ✅ Check Compatibility
+                    </button>
+                    <button class="action-button primary" onclick="downloadCudaSamples()" style="width: 100%;">
+                        📥 Download CUDA Samples
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/interactive.js"></script>
+    <script src="js/cuda-integration.js"></script>
+</body>
+</html>

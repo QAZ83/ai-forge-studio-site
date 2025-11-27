@@ -1,0 +1,104 @@
+#version 450
+
+// Compute shader for neural network inference
+// Author: M.3R3
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+// Input/Output buffers
+layout(std430, set = 0, binding = 0) readonly buffer InputBuffer {
+    float inputData[];
+};
+
+layout(std430, set = 0, binding = 1) writeonly buffer OutputBuffer {
+    float outputData[];
+};
+
+layout(std430, set = 0, binding = 2) readonly buffer WeightsBuffer {
+    float weights[];
+};
+
+layout(std430, set = 0, binding = 3) readonly buffer BiasBuffer {
+    float bias[];
+};
+
+// Push constants for layer configuration
+layout(push_constant) uniform PushConstants {
+    int inputSize;
+    int outputSize;
+    int batchSize;
+    int activationType;  // 0=none, 1=relu, 2=sigmoid, 3=tanh, 4=gelu
+} pc;
+
+// Shared memory for tile-based computation
+shared float sharedInput[256];
+shared float sharedWeights[256];
+
+// Activation functions
+float relu(float x) {
+    return max(0.0, x);
+}
+
+float sigmoid(float x) {
+    return 1.0 / (1.0 + exp(-x));
+}
+
+float gelu(float x) {
+    // GELU approximation
+    return 0.5 * x * (1.0 + tanh(sqrt(2.0 / 3.14159265) * (x + 0.044715 * x * x * x)));
+}
+
+float applyActivation(float x, int type) {
+    switch (type) {
+        case 1: return relu(x);
+        case 2: return sigmoid(x);
+        case 3: return tanh(x);
+        case 4: return gelu(x);
+        default: return x;
+    }
+}
+
+void main() {
+    uint globalId = gl_GlobalInvocationID.x;
+    uint localId = gl_LocalInvocationID.x;
+    
+    if (globalId >= uint(pc.outputSize * pc.batchSize)) {
+        return;
+    }
+    
+    uint batchIdx = globalId / uint(pc.outputSize);
+    uint outputIdx = globalId % uint(pc.outputSize);
+    
+    // Compute dot product with tiling
+    float sum = 0.0;
+    uint numTiles = (uint(pc.inputSize) + 255u) / 256u;
+    
+    for (uint tile = 0u; tile < numTiles; ++tile) {
+        // Load input tile to shared memory
+        uint inputIdx = tile * 256u + localId;
+        if (inputIdx < uint(pc.inputSize)) {
+            sharedInput[localId] = inputData[batchIdx * uint(pc.inputSize) + inputIdx];
+        } else {
+            sharedInput[localId] = 0.0;
+        }
+        
+        barrier();
+        
+        // Compute partial sum
+        for (uint i = 0u; i < 256u && (tile * 256u + i) < uint(pc.inputSize); ++i) {
+            uint weightIdx = outputIdx * uint(pc.inputSize) + tile * 256u + i;
+            sum += sharedInput[i] * weights[weightIdx];
+        }
+        
+        barrier();
+    }
+    
+    // Add bias
+    sum += bias[outputIdx];
+    
+    // Apply activation
+    sum = applyActivation(sum, pc.activationType);
+    
+    // Write output
+    outputData[globalId] = sum;
+}

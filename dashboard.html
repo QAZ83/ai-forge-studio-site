@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Forge Studio - Dashboard Overview</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="circuit-background"></div>
+
+    <div class="main-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40">
+                        <defs>
+                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0099ff;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M20 5 L35 15 L35 25 L20 35 L5 25 L5 15 Z" fill="url(#logoGradient)" opacity="0.2"/>
+                        <path d="M20 8 L32 16 L32 24 L20 32 L8 24 L8 16 Z" stroke="url(#logoGradient)" stroke-width="2" fill="none"/>
+                        <circle cx="20" cy="20" r="5" fill="url(#logoGradient)"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>AI Forge Studio</h1>
+                    <p class="subtitle">Performance Dashboard</p>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <button class="nav-btn" data-page="index">
+                    <span class="icon">🏠</span>
+                    <span>الرئيسية</span>
+                </button>
+                <button class="nav-btn active" data-page="dashboard">
+                    <span class="icon">📊</span>
+                    <span>لوحة التحكم</span>
+                </button>
+                <button class="nav-btn" data-page="cuda">
+                    <span class="icon">⚡</span>
+                    <span>CUDA</span>
+                </button>
+                <button class="nav-btn" data-page="tensorrt">
+                    <span class="icon">🧠</span>
+                    <span>TensorRT</span>
+                </button>
+                <button class="nav-btn" data-page="vulkan">
+                    <span class="icon">🎮</span>
+                    <span>Vulkan</span>
+                </button>
+                <button class="nav-btn" data-page="inference">
+                    <span class="icon">🚀</span>
+                    <span>Inference</span>
+                </button>
+                <button class="search-btn">
+                    <span class="icon">🔍</span>
+                </button>
+                <button class="terminal-btn">Terminal</button>
+            </nav>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Performance Overview -->
+            <section class="panel wide-panel">
+                <div class="panel-header">
+                    <h2>Performance Dashboard</h2>
+                    <button class="panel-action">⚙️</button>
+                </div>
+                <div class="panel-content">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon">🎯</div>
+                            <div class="metric-info">
+                                <h3>Current GPU Usage</h3>
+                                <p class="metric-value">95%</p>
+                                <p class="metric-change positive">+2.3%</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">⚡</div>
+                            <div class="metric-info">
+                                <h3>CPU Usage</h3>
+                                <p class="metric-value">12%</p>
+                                <p class="metric-change negative">-0.5%</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">💾</div>
+                            <div class="metric-info">
+                                <h3>Memory</h3>
+                                <p class="metric-value">28GB</p>
+                                <p class="metric-change neutral">0%</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">🌡️</div>
+                            <div class="metric-info">
+                                <h3>Temperature</h3>
+                                <p class="metric-value">72°C</p>
+                                <p class="metric-change positive">-1°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GPU Tracking -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>GPU Tracking Constantly</h2>
+                    <div class="status-badges">
+                        <span class="badge success">Online</span>
+                        <span class="badge info">Running</span>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="tracking-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">VRAM:</span>
+                            <span class="stat-value">21/30</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Clocks:</span>
+                            <span class="stat-value">~21/300</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Usage:</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <canvas id="gpuTrackingChart" height="200"></canvas>
+                </div>
+            </section>
+
+            <!-- Status Tracking -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>Status Tracking Constantly</h2>
+                    <button class="panel-action">🔄</button>
+                </div>
+                <div class="panel-content">
+                    <div class="status-list">
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Active model training process</span>
+                        </div>
+                        <div class="status-item active">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Rendering pipeline initialized</span>
+                        </div>
+                        <div class="status-item pending">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Awaiting cloud sync</span>
+                        </div>
+                        <div class="status-item complete">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Build completed successfully</span>
+                        </div>
+                    </div>
+                    <canvas id="statusChart" height="200"></canvas>
+                </div>
+            </section>
+
+            <!-- Training Studio -->
+            <section class="panel tall-panel">
+                <div class="panel-header">
+                    <h2>AI Training Studio</h2>
+                    <button class="panel-action">📈</button>
+                </div>
+                <div class="panel-content">
+                    <div class="training-config">
+                        <h3>Training Configs</h3>
+                        <div class="config-toggles">
+                            <label class="toggle-item">
+                                <span>Experimentation</span>
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <label class="toggle-item">
+                                <span>Hypertuning</span>
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <label class="toggle-item">
+                                <span>Training mode</span>
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <label class="toggle-item">
+                                <span>Enhanced Mode</span>
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <label class="toggle-item">
+                                <span>Tracking Tester</span>
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <label class="toggle-item">
+                                <span>Override</span>
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <label class="toggle-item">
+                                <span>Batch Size</span>
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 2rem;">Training Loss & Metrics</h3>
+                    <canvas id="trainingMetricsChart" height="250"></canvas>
+
+                    <button class="action-button primary" style="margin-top: 1rem;">
+                        Visualize Web Output
+                    </button>
+                </div>
+            </section>
+
+            <!-- Development Environment -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>Development Environment</h2>
+                    <button class="panel-action">🔧</button>
+                </div>
+                <div class="panel-content">
+                    <div class="env-tabs">
+                        <button class="env-tab active">Code Editor</button>
+                        <button class="env-tab">Terminal</button>
+                        <button class="env-tab">Build Log</button>
+                    </div>
+                    <div class="code-display">
+                        <pre><code><span class="code-comment">// AI Forge Studio - Neural Network Implementation</span>
+<span class="code-keyword">class</span> <span class="code-function">NeuralNetwork</span> {
+    <span class="code-keyword">constructor</span>(<span class="code-variable">layers</span>) {
+        <span class="code-keyword">this</span>.<span class="code-variable">layers</span> = <span class="code-variable">layers</span>;
+        <span class="code-keyword">this</span>.<span class="code-function">initialize</span>();
+    }
+
+    <span class="code-function">initialize</span>() {
+        <span class="code-comment">// Initialize weights and biases</span>
+        <span class="code-keyword">console</span>.<span class="code-function">log</span>(<span class="code-value">'Network initialized'</span>);
+    }
+
+    <span class="code-function">forward</span>(<span class="code-variable">input</span>) {
+        <span class="code-comment">// Forward propagation</span>
+        <span class="code-keyword">return</span> <span class="code-keyword">this</span>.<span class="code-function">compute</span>(<span class="code-variable">input</span>);
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cloud / API Interface -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>Cloud / API Interface</h2>
+                    <button class="panel-action">☁️</button>
+                </div>
+                <div class="panel-content">
+                    <div class="api-section">
+                        <h3>Cloudflare Workers Status</h3>
+                        <div class="worker-list">
+                            <div class="worker-item">
+                                <span class="worker-name">📄 workers.js</span>
+                                <span class="status-badge online">✓</span>
+                            </div>
+                            <div class="worker-item">
+                                <span class="worker-name">📄 api.worker.js</span>
+                                <span class="status-badge online">✓</span>
+                            </div>
+                            <div class="worker-item">
+                                <span class="worker-name">📄 mlobs.js</span>
+                                <span class="status-badge pending">⊙</span>
+                            </div>
+                        </div>
+
+                        <div class="deployment-status">
+                            <div class="circular-progress" data-value="95">
+                                <svg class="progress-ring" width="120" height="120">
+                                    <circle class="progress-ring-bg" cx="60" cy="60" r="50" />
+                                    <circle class="progress-ring-fill" cx="60" cy="60" r="50" />
+                                </svg>
+                                <div class="progress-value">
+                                    <span class="value">95%</span>
+                                </div>
+                            </div>
+                            <p style="text-align: center; margin-top: 1rem;">Deploying to Cloudflare</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 2rem;">API Endpoint Health</h3>
+                    <div class="endpoint-list">
+                        <div class="endpoint-item">
+                            <span class="endpoint-status online">●</span>
+                            <span class="endpoint-name">/api/v1/chat</span>
+                            <span class="endpoint-badge">Online</span>
+                        </div>
+                        <div class="endpoint-item">
+                            <span class="endpoint-status online">●</span>
+                            <span class="endpoint-name">/api/v1/generate</span>
+                            <span class="endpoint-badge">Online</span>
+                        </div>
+                        <div class="endpoint-item">
+                            <span class="endpoint-status warning">●</span>
+                            <span class="endpoint-name">/api/v1/train</span>
+                            <span class="endpoint-badge warning">Warning</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/interactive.js"></script>
+    <script src="js/code-editor.js"></script>
+</body>
+</html>

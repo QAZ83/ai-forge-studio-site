@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0099ff;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#0a0e1a"/>
+  <circle cx="256" cy="256" r="230" fill="none" stroke="url(#iconGradient)" stroke-width="4" opacity="0.3"/>
+  
+  <!-- Outer hexagon with glow -->
+  <g filter="url(#glow)">
+    <path d="M256 56 L416 136 L416 296 L256 376 L96 296 L96 136 Z" 
+          fill="url(#iconGradient)" 
+          opacity="0.15"/>
+    <path d="M256 56 L416 136 L416 296 L256 376 L96 296 L96 136 Z" 
+          stroke="url(#iconGradient)" 
+          stroke-width="4" 
+          fill="none"/>
+  </g>
+  
+  <!-- Middle hexagon -->
+  <path d="M256 96 L376 156 L376 276 L256 336 L136 276 L136 156 Z" 
+        stroke="url(#iconGradient)" 
+        stroke-width="6" 
+        fill="none"
+        opacity="0.8"/>
+  
+  <!-- Inner hexagon -->
+  <path d="M256 136 L336 176 L336 256 L256 296 L176 256 L176 176 Z" 
+        stroke="url(#iconGradient)" 
+        stroke-width="4" 
+        fill="none"
+        opacity="0.6"/>
+  
+  <!-- Center circle with gradient -->
+  <circle cx="256" cy="216" r="40" fill="url(#iconGradient)"/>
+  
+  <!-- AI text -->
+  <text x="256" y="226" 
+        text-anchor="middle" 
+        font-family="Arial, sans-serif" 
+        font-weight="bold" 
+        font-size="32" 
+        fill="#0a0e1a">AI</text>
+  
+  <!-- Connecting lines -->
+  <line x1="256" y1="176" x2="256" y2="96" stroke="url(#iconGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="296" y1="196" x2="336" y2="156" stroke="url(#iconGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="296" y1="236" x2="336" y2="256" stroke="url(#iconGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="256" y1="256" x2="256" y2="296" stroke="url(#iconGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="216" y1="236" x2="176" y2="256" stroke="url(#iconGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="216" y1="196" x2="176" y2="156" stroke="url(#iconGradient)" stroke-width="3" opacity="0.6"/>
+  
+  <!-- Decorative dots -->
+  <circle cx="256" cy="96" r="8" fill="url(#iconGradient)"/>
+  <circle cx="336" cy="156" r="6" fill="url(#iconGradient)"/>
+  <circle cx="336" cy="256" r="6" fill="url(#iconGradient)"/>
+  <circle cx="256" cy="296" r="6" fill="url(#iconGradient)"/>
+  <circle cx="176" cy="256" r="6" fill="url(#iconGradient)"/>
+  <circle cx="176" cy="156" r="6" fill="url(#iconGradient)"/>
+  
+  <!-- FORGE text at bottom -->
+  <text x="256" y="420" 
+        text-anchor="middle" 
+        font-family="Arial, sans-serif" 
+        font-weight="bold" 
+        font-size="48" 
+        fill="url(#iconGradient)">FORGE</text>
+  <text x="256" y="455" 
+        text-anchor="middle" 
+        font-family="Arial, sans-serif" 
+        font-weight="normal" 
+        font-size="24" 
+        fill="#8b95a8">STUDIO</text>
+</svg>

@@ -28,6 +28,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
         getModes: () => ipcRenderer.invoke('inference-get-modes'),
         getLastResult: () => ipcRenderer.invoke('inference-get-last-result'),
         isAvailable: () => ipcRenderer.invoke('inference-is-available'),
+        getStatus: () => ipcRenderer.invoke('inference-get-status'),
+        listModels: () => ipcRenderer.invoke('inference-list-models'),
+        selectModel: (type = 'onnx') => ipcRenderer.invoke('inference-select-model', type),
     },
 
     // File operations

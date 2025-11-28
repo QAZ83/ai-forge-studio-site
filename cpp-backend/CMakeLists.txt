@@ -28,21 +28,28 @@ message(STATUS "CUDA Include: ${CUDAToolkit_INCLUDE_DIRS}")
 message(STATUS "CUDA Architectures: ${CMAKE_CUDA_ARCHITECTURES}")
 
 # =============================================================================
-# TensorRT Configuration (Optional for now)
+# TensorRT 10.14 Configuration
 # =============================================================================
-set(TENSORRT_ROOT "C:/Program Files/NVIDIA/TensorRT" CACHE PATH "TensorRT installation path")
+set(TENSORRT_ROOT "C:/Users/hamad/ai-forge-studio-site/dist/TensorRT-10.14.1.48" CACHE PATH "TensorRT installation path")
+set(TENSORRT_INCLUDE_DIR "${TENSORRT_ROOT}/include")
+set(TENSORRT_LIB_DIR "${TENSORRT_ROOT}/lib")
+set(TENSORRT_BIN_DIR "${TENSORRT_ROOT}/bin")
 
-if(EXISTS "${TENSORRT_ROOT}/include/NvInfer.h")
+if(EXISTS "${TENSORRT_INCLUDE_DIR}/NvInfer.h")
     set(TENSORRT_FOUND TRUE)
-    set(TENSORRT_INCLUDE_DIRS "${TENSORRT_ROOT}/include")
-    set(TENSORRT_LIB_DIR "${TENSORRT_ROOT}/lib")
     
-    # Find TensorRT libraries
-    find_library(NVINFER_LIB nvinfer PATHS ${TENSORRT_LIB_DIR})
-    find_library(NVONNXPARSER_LIB nvonnxparser PATHS ${TENSORRT_LIB_DIR})
+    # TensorRT 10.x uses versioned library names
+    find_library(NVINFER_LIB NAMES nvinfer_10 nvinfer PATHS ${TENSORRT_LIB_DIR} NO_DEFAULT_PATH)
+    find_library(NVINFER_PLUGIN_LIB NAMES nvinfer_plugin_10 nvinfer_plugin PATHS ${TENSORRT_LIB_DIR} NO_DEFAULT_PATH)
+    find_library(NVONNXPARSER_LIB NAMES nvonnxparser_10 nvonnxparser PATHS ${TENSORRT_LIB_DIR} NO_DEFAULT_PATH)
     
-    message(STATUS "TensorRT Found: ${TENSORRT_ROOT}")
-    message(STATUS "TensorRT Include: ${TENSORRT_INCLUDE_DIRS}")
+    message(STATUS "=== TensorRT Configuration ===")
+    message(STATUS "TensorRT Root: ${TENSORRT_ROOT}")
+    message(STATUS "TensorRT Include: ${TENSORRT_INCLUDE_DIR}")
+    message(STATUS "TensorRT Lib: ${TENSORRT_LIB_DIR}")
+    message(STATUS "nvinfer: ${NVINFER_LIB}")
+    message(STATUS "nvinfer_plugin: ${NVINFER_PLUGIN_LIB}")
+    message(STATUS "nvonnxparser: ${NVONNXPARSER_LIB}")
 else()
     set(TENSORRT_FOUND FALSE)
     message(WARNING "TensorRT not found at ${TENSORRT_ROOT}")
@@ -85,7 +92,7 @@ target_link_libraries(gpu_info_json PRIVATE
 
 # =============================================================================
 # TensorRT Inference JSON - For Electron Inference Dashboard
-# Works in CUDA benchmark mode even without TensorRT installed
+# Supports: CUDA benchmark, Mock mode, and Real TensorRT inference
 # =============================================================================
 add_executable(trt_inference_json
     src/trt_inference_json.cpp
@@ -98,10 +105,26 @@ target_include_directories(trt_inference_json PRIVATE
     ${CUDAToolkit_INCLUDE_DIRS}
 )
 
-target_link_libraries(trt_inference_json PRIVATE
-    CUDA::cudart
-    CUDA::nvml
-)
+# Add TensorRT support if available
+if(TENSORRT_FOUND)
+    target_compile_definitions(trt_inference_json PRIVATE HAS_TENSORRT=1)
+    target_include_directories(trt_inference_json PRIVATE ${TENSORRT_INCLUDE_DIR})
+    target_link_directories(trt_inference_json PRIVATE ${TENSORRT_LIB_DIR})
+    target_link_libraries(trt_inference_json PRIVATE
+        CUDA::cudart
+        CUDA::nvml
+        ${NVINFER_LIB}
+        ${NVINFER_PLUGIN_LIB}
+        ${NVONNXPARSER_LIB}
+    )
+    message(STATUS "trt_inference_json: TensorRT ENABLED")
+else()
+    target_link_libraries(trt_inference_json PRIVATE
+        CUDA::cudart
+        CUDA::nvml
+    )
+    message(STATUS "trt_inference_json: TensorRT DISABLED (mock/cuda modes only)")
+endif()
 
 # Set output directory
 set_target_properties(gpu_info gpu_info_json trt_inference_json PROPERTIES
@@ -109,7 +132,7 @@ set_target_properties(gpu_info gpu_info_json trt_inference_json PROPERTIES
 )
 
 # =============================================================================
-# TensorRT Inference Executable (Will be added later)
+# Legacy TensorRT Inference Executable (Full featured)
 # =============================================================================
 if(TENSORRT_FOUND)
     add_executable(trt_inference
@@ -120,13 +143,16 @@ if(TENSORRT_FOUND)
     target_include_directories(trt_inference PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CUDAToolkit_INCLUDE_DIRS}
-        ${TENSORRT_INCLUDE_DIRS}
+        ${TENSORRT_INCLUDE_DIR}
     )
+    
+    target_link_directories(trt_inference PRIVATE ${TENSORRT_LIB_DIR})
     
     target_link_libraries(trt_inference PRIVATE
         CUDA::cudart
         CUDA::nvml
         ${NVINFER_LIB}
+        ${NVINFER_PLUGIN_LIB}
         ${NVONNXPARSER_LIB}
     )
     
@@ -138,9 +164,19 @@ endif()
 # =============================================================================
 # Installation
 # =============================================================================
-install(TARGETS gpu_info DESTINATION bin)
+install(TARGETS gpu_info gpu_info_json trt_inference_json DESTINATION bin)
 if(TENSORRT_FOUND)
     install(TARGETS trt_inference DESTINATION bin)
+endif()
+
+# =============================================================================
+# Runtime Note: Add TensorRT bin to PATH before running
+# =============================================================================
+if(TENSORRT_FOUND)
+    message(STATUS "")
+    message(STATUS ">>> IMPORTANT: Add TensorRT DLLs to PATH before running:")
+    message(STATUS "    set PATH=${TENSORRT_BIN_DIR};%PATH%")
+    message(STATUS "")
 endif()
 
 message(STATUS "==============================================")

@@ -473,7 +473,7 @@ ipcMain.handle('stop-gpu-monitor', () => {
 ipcMain.handle('inference-run-benchmark', async (event, mode = 'cuda', options = {}) => {
     console.log(`[Inference] Running benchmark in ${mode} mode...`);
     const result = await inferenceMonitor.runBenchmark(mode, options);
-    console.log(`[Inference] Benchmark complete: ${result.throughputFPS} FPS`);
+    console.log(`[Inference] Benchmark complete: ${result.success ? result.throughputFPS + ' FPS' : result.error}`);
     return result;
 });
 
@@ -490,6 +490,34 @@ ipcMain.handle('inference-get-last-result', () => {
 // Check if inference is available
 ipcMain.handle('inference-is-available', () => {
     return inferenceMonitor.isAvailable();
+});
+
+// Get inference service status
+ipcMain.handle('inference-get-status', () => {
+    return inferenceMonitor.getStatus();
+});
+
+// List available models
+ipcMain.handle('inference-list-models', () => {
+    return inferenceMonitor.listModels();
+});
+
+// Select model file dialog
+ipcMain.handle('inference-select-model', async (event, type = 'onnx') => {
+    const filters = type === 'onnx' 
+        ? [{ name: 'ONNX Models', extensions: ['onnx'] }]
+        : [{ name: 'TensorRT Engines', extensions: ['engine', 'plan'] }];
+    
+    const result = await dialog.showOpenDialog(mainWindow, {
+        title: `Select ${type === 'onnx' ? 'ONNX Model' : 'TensorRT Engine'}`,
+        filters: [...filters, { name: 'All Files', extensions: ['*'] }],
+        properties: ['openFile']
+    });
+    
+    if (!result.canceled && result.filePaths.length > 0) {
+        return { success: true, path: result.filePaths[0] };
+    }
+    return { success: false, canceled: true };
 });
 
 console.log('🚀 AI Forge Studio - Electron App Started');

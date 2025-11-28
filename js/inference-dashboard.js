@@ -2,6 +2,12 @@
  * AI Forge Studio - Inference Dashboard
  * Connects to C++ TensorRT/CUDA backend for real inference benchmarks
  * 
+ * Supported Modes:
+ *   - cuda: Real CUDA compute benchmark (matrix multiplication)
+ *   - mock: Simulated TensorRT inference
+ *   - tensorrt: Load and run optimized .engine file
+ *   - onnx: Convert ONNX model to TensorRT and benchmark
+ * 
  * Author: M.3R3 | AI Forge OPS
  */
 
@@ -11,6 +17,9 @@ class InferenceDashboard {
         this.isRunning = false;
         this.history = [];
         this.maxHistory = 20;
+        this.selectedMode = 'cuda';
+        this.selectedModelPath = null;
+        this.status = null;
         
         this.init();
     }
@@ -19,11 +28,28 @@ class InferenceDashboard {
         // Check if running in Electron
         if (typeof window.electronAPI !== 'undefined' && window.electronAPI.isElectron) {
             console.log('🧠 Inference Dashboard: Running in Electron mode');
+            await this.loadStatus();
             await this.checkAvailability();
             this.setupEventListeners();
         } else {
             console.log('🌐 Inference Dashboard: Running in browser mode');
             this.setupMockMode();
+        }
+    }
+    
+    async loadStatus() {
+        try {
+            this.status = await window.electronAPI.inference.getStatus();
+            console.log('📊 Inference Status:', this.status);
+            
+            // Update status indicators
+            const tensorrtIndicator = document.querySelector('#tensorrt-status, .tensorrt-status');
+            if (tensorrtIndicator) {
+                tensorrtIndicator.textContent = this.status.tensorrtPath ? '✅ TensorRT Ready' : '⚠️ TensorRT Not Found';
+                tensorrtIndicator.className = this.status.tensorrtPath ? 'status-ready' : 'status-warning';
+            }
+        } catch (error) {
+            console.error('Failed to load inference status:', error);
         }
     }
     
@@ -35,10 +61,20 @@ class InferenceDashboard {
             if (available) {
                 const modes = await window.electronAPI.inference.getModes();
                 this.populateModeSelector(modes);
+                await this.loadAvailableModels();
             }
         } catch (error) {
             console.error('Failed to check inference availability:', error);
             this.updateStatus('error');
+        }
+    }
+    
+    async loadAvailableModels() {
+        try {
+            const models = await window.electronAPI.inference.listModels();
+            this.populateModelSelector(models);
+        } catch (error) {
+            console.error('Failed to load models:', error);
         }
     }
     
@@ -54,7 +90,22 @@ class InferenceDashboard {
         if (modeSelect) {
             modeSelect.addEventListener('change', (e) => {
                 this.selectedMode = e.target.value;
+                this.updateModeUI(e.target.value);
             });
+        }
+        
+        // Model selector
+        const modelSelect = document.querySelector('#model-select, .model-select');
+        if (modelSelect) {
+            modelSelect.addEventListener('change', (e) => {
+                this.selectedModelPath = e.target.value;
+            });
+        }
+        
+        // Browse model button
+        const browseBtn = document.querySelector('#browse-model-btn, .browse-model-btn');
+        if (browseBtn) {
+            browseBtn.addEventListener('click', () => this.browseModel());
         }
         
         // Quick mode buttons
@@ -64,6 +115,36 @@ class InferenceDashboard {
                 this.runBenchmark(mode);
             });
         });
+        
+        // Quick ONNX buttons
+        document.querySelectorAll('[data-onnx-model]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const modelPath = e.target.dataset.onnxModel;
+                this.runBenchmark('onnx', { modelPath });
+            });
+        });
+        
+        // Quick Engine buttons
+        document.querySelectorAll('[data-engine-file]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const enginePath = e.target.dataset.engineFile;
+                this.runBenchmark('tensorrt', { enginePath });
+            });
+        });
+    }
+    
+    updateModeUI(mode) {
+        const modelSection = document.querySelector('.model-selection, #model-selection');
+        if (modelSection) {
+            // Show model selection only for tensorrt and onnx modes
+            modelSection.style.display = (mode === 'tensorrt' || mode === 'onnx') ? 'block' : 'none';
+        }
+        
+        // Update file type label
+        const fileTypeLabel = document.querySelector('.model-type-label, #model-type-label');
+        if (fileTypeLabel) {
+            fileTypeLabel.textContent = mode === 'onnx' ? 'ONNX Model (.onnx)' : 'TensorRT Engine (.engine)';
+        }
     }
     
     setupMockMode() {
@@ -85,7 +166,59 @@ class InferenceDashboard {
         this.selectedMode = modes[0]?.id || 'cuda';
     }
     
-    async runBenchmark(mode = null) {
+    populateModelSelector(models) {
+        const select = document.querySelector('#model-select, .model-select');
+        if (!select) return;
+        
+        let options = '<option value="">-- Select Model --</option>';
+        
+        if (models.engines && models.engines.length > 0) {
+            options += '<optgroup label="TensorRT Engines (.engine)">';
+            models.engines.forEach(m => {
+                options += `<option value="${m.path}" data-type="engine">${m.name}</option>`;
+            });
+            options += '</optgroup>';
+        }
+        
+        if (models.onnx && models.onnx.length > 0) {
+            options += '<optgroup label="ONNX Models (.onnx)">';
+            models.onnx.forEach(m => {
+                options += `<option value="${m.path}" data-type="onnx">${m.name}</option>`;
+            });
+            options += '</optgroup>';
+        }
+        
+        select.innerHTML = options;
+    }
+    
+    async browseModel() {
+        try {
+            const type = this.selectedMode === 'onnx' ? 'onnx' : 'engine';
+            const result = await window.electronAPI.inference.selectModel(type);
+            
+            if (result.success && result.path) {
+                this.selectedModelPath = result.path;
+                
+                // Update UI
+                const pathDisplay = document.querySelector('#selected-model-path, .selected-model-path');
+                if (pathDisplay) {
+                    pathDisplay.textContent = result.path.split(/[\\/]/).pop(); // Just filename
+                    pathDisplay.title = result.path;
+                }
+                
+                // Add to model select
+                const select = document.querySelector('#model-select, .model-select');
+                if (select) {
+                    const option = new Option(result.path.split(/[\\/]/).pop(), result.path, true, true);
+                    select.appendChild(option);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to browse for model:', error);
+        }
+    }
+    
+    async runBenchmark(mode = null, options = {}) {
         if (this.isRunning) {
             console.log('Benchmark already running');
             return;
@@ -93,18 +226,38 @@ class InferenceDashboard {
         
         const selectedMode = mode || this.selectedMode || 'cuda';
         
+        // Prepare options based on mode
+        const benchmarkOptions = { ...options };
+        
+        if (selectedMode === 'tensorrt' && !benchmarkOptions.enginePath) {
+            benchmarkOptions.enginePath = this.selectedModelPath;
+            if (!benchmarkOptions.enginePath) {
+                this.showError('Please select a TensorRT engine file (.engine)');
+                return;
+            }
+        }
+        
+        if (selectedMode === 'onnx' && !benchmarkOptions.modelPath) {
+            benchmarkOptions.modelPath = this.selectedModelPath;
+            if (!benchmarkOptions.modelPath) {
+                this.showError('Please select an ONNX model file (.onnx)');
+                return;
+            }
+        }
+        
         this.isRunning = true;
         this.updateStatus('running');
-        this.updateUI({ status: 'Running benchmark...' });
+        this.updateUI({ status: `Running ${selectedMode.toUpperCase()} benchmark...` });
         
         try {
-            console.log(`🚀 Running ${selectedMode} benchmark...`);
+            console.log(`🚀 Running ${selectedMode} benchmark...`, benchmarkOptions);
             const startTime = performance.now();
             
-            const result = await window.electronAPI.inference.runBenchmark(selectedMode);
+            const result = await window.electronAPI.inference.runBenchmark(selectedMode, benchmarkOptions);
             
             const elapsedTime = performance.now() - startTime;
             console.log(`✅ Benchmark completed in ${elapsedTime.toFixed(0)}ms`);
+            console.log('📊 Result:', result);
             
             this.lastResult = result;
             this.addToHistory(result);
@@ -121,6 +274,19 @@ class InferenceDashboard {
             });
         } finally {
             this.isRunning = false;
+        }
+    }
+    
+    showError(message) {
+        const errorEl = document.querySelector('.inference-error, #inference-error');
+        if (errorEl) {
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        } else {
+            alert(message);
         }
     }
     
@@ -170,7 +336,7 @@ class InferenceDashboard {
             result.precision || '--');
         
         this.updateElement('.inference-mode, #current-inference-mode', 
-            result.mode || '--');
+            result.mode ? result.mode.toUpperCase() : '--');
         
         this.updateElement('.inference-device, #inference-device', 
             result.device || '--');
@@ -190,6 +356,35 @@ class InferenceDashboard {
         this.updateElement('.inference-memory, #inference-memory', 
             result.inferenceMemoryMB ? `${result.inferenceMemoryMB.toFixed(1)} MB` : '--');
         
+        // Advanced latency metrics (TensorRT real mode)
+        this.updateElement('.inference-min-latency, #inference-min-latency', 
+            result.minLatencyMs ? `${result.minLatencyMs.toFixed(3)} ms` : '--');
+        
+        this.updateElement('.inference-max-latency, #inference-max-latency', 
+            result.maxLatencyMs ? `${result.maxLatencyMs.toFixed(3)} ms` : '--');
+        
+        this.updateElement('.inference-p95-latency, #inference-p95-latency', 
+            result.p95LatencyMs ? `${result.p95LatencyMs.toFixed(3)} ms` : '--');
+        
+        // TensorRT version
+        this.updateElement('.inference-tensorrt-version, #inference-tensorrt-version', 
+            result.tensorrtVersion || '--');
+        
+        // Model path (for TensorRT/ONNX modes)
+        this.updateElement('.inference-model-path, #inference-model-path', 
+            result.modelPath ? result.modelPath.split(/[\\/]/).pop() : '--');
+        
+        // Output classes
+        this.updateElement('.inference-output-classes, #inference-output-classes', 
+            result.outputClasses || '--');
+        
+        // Benchmark config
+        this.updateElement('.inference-warmup-runs, #inference-warmup-runs', 
+            result.warmupRuns || '--');
+        
+        this.updateElement('.inference-benchmark-runs, #inference-benchmark-runs', 
+            result.benchmarkRuns || '--');
+        
         // GPU info
         this.updateElement('.inference-cuda-version, #inference-cuda-version', 
             result.cudaVersion || '--');
@@ -203,6 +398,32 @@ class InferenceDashboard {
         this.updateElement('.inference-cuda-cores, #inference-cuda-cores', 
             result.cudaCores ? result.cudaCores.toLocaleString() : '--');
         
+        this.updateElement('.inference-compute-capability, #inference-compute-capability', 
+            result.computeCapability || '--');
+        
+        // VRAM info
+        this.updateElement('.inference-vram-total, #inference-vram-total', 
+            result.vramTotalMB ? `${(result.vramTotalMB / 1024).toFixed(1)} GB` : '--');
+        
+        this.updateElement('.inference-vram-used, #inference-vram-used', 
+            result.vramUsedMB ? `${(result.vramUsedMB / 1024).toFixed(1)} GB` : '--');
+        
+        this.updateElement('.inference-vram-free, #inference-vram-free', 
+            result.vramFreeMB ? `${(result.vramFreeMB / 1024).toFixed(1)} GB` : '--');
+        
+        // GPU stats
+        this.updateElement('.inference-temperature, #inference-temperature', 
+            result.temperatureC ? `${result.temperatureC}°C` : '--');
+        
+        this.updateElement('.inference-power, #inference-power', 
+            result.powerDrawW ? `${result.powerDrawW}W / ${result.powerLimitW}W` : '--');
+        
+        this.updateElement('.inference-gpu-clock, #inference-gpu-clock', 
+            result.gpuClockMHz ? `${result.gpuClockMHz} MHz` : '--');
+        
+        this.updateElement('.inference-mem-clock, #inference-mem-clock', 
+            result.memClockMHz ? `${result.memClockMHz} MHz` : '--');
+        
         // Timestamp
         if (result.timestamp) {
             const time = new Date(result.timestamp).toLocaleTimeString();
@@ -213,7 +434,11 @@ class InferenceDashboard {
         if (result.status) {
             this.updateElement('.inference-status-text, #inference-status-text', result.status);
         } else if (result.success) {
-            this.updateElement('.inference-status-text, #inference-status-text', 'Benchmark completed');
+            const modeText = result.mode === 'tensorrt' ? 'TensorRT' : 
+                            result.mode === 'onnx' ? 'ONNX→TensorRT' :
+                            result.mode === 'cuda' ? 'CUDA Compute' : 'Mock';
+            this.updateElement('.inference-status-text, #inference-status-text', 
+                `${modeText} benchmark completed`);
         } else if (result.error) {
             this.updateElement('.inference-status-text, #inference-status-text', `Error: ${result.error}`);
         }

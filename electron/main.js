@@ -12,7 +12,7 @@ const fs = require('fs');
 const { gpuMonitor } = require('./gpu-monitor');
 
 // Inference Monitor for TensorRT benchmarks
-const { inferenceMonitor } = require('./inference-monitor');
+const { inferenceMonitor, getHistory } = require('./inference-monitor');
 
 // Disable hardware acceleration if issues detected
 app.disableHardwareAcceleration();
@@ -562,6 +562,16 @@ ipcMain.handle('inference-browse-model', async (event, type = 'onnx') => {
 // Legacy: Select model file dialog
 ipcMain.handle('inference-select-model', async (event, type = 'onnx') => {
     return await ipcMain.handle('inference-browse-model', event, type);
+});
+
+// Get inference benchmark history
+ipcMain.handle('inference-get-history', async () => {
+    try {
+        return getHistory();
+    } catch (err) {
+        console.error('[Main] Failed to get inference history:', err);
+        return [];
+    }
 });
 
 console.log('🚀 AI Forge Studio - Electron App Started');

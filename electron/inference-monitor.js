@@ -13,6 +13,90 @@ const { execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
+// ============================================================================
+// Benchmark History Management
+// ============================================================================
+const MODELS_DIR = path.join(process.cwd(), 'models');
+const HISTORY_FILE = path.join(MODELS_DIR, 'history.json');
+const MAX_HISTORY_ENTRIES = 100;
+
+/**
+ * Ensure history file exists
+ */
+function ensureHistoryFile() {
+    try {
+        // Ensure models directory exists
+        if (!fs.existsSync(MODELS_DIR)) {
+            fs.mkdirSync(MODELS_DIR, { recursive: true });
+        }
+        
+        // Ensure history file exists
+        if (!fs.existsSync(HISTORY_FILE)) {
+            fs.writeFileSync(HISTORY_FILE, JSON.stringify({ runs: [] }, null, 2), 'utf-8');
+        }
+    } catch (error) {
+        console.error('[InferenceMonitor] Failed to ensure history file:', error.message);
+    }
+}
+
+/**
+ * Load history synchronously
+ * @returns {Array} Array of history entries
+ */
+function loadHistorySync() {
+    try {
+        ensureHistoryFile();
+        const data = fs.readFileSync(HISTORY_FILE, 'utf-8');
+        const parsed = JSON.parse(data);
+        return Array.isArray(parsed.runs) ? parsed.runs : [];
+    } catch (error) {
+        console.error('[InferenceMonitor] Failed to load history:', error.message);
+        return [];
+    }
+}
+
+/**
+ * Save history synchronously
+ * @param {Array} runs - Array of history entries
+ */
+function saveHistorySync(runs) {
+    try {
+        ensureHistoryFile();
+        fs.writeFileSync(HISTORY_FILE, JSON.stringify({ runs }, null, 2), 'utf-8');
+    } catch (error) {
+        console.error('[InferenceMonitor] Failed to save history:', error.message);
+    }
+}
+
+/**
+ * Append a new entry to history
+ * @param {object} entry - Benchmark result entry
+ */
+function appendHistoryEntry(entry) {
+    try {
+        const runs = loadHistorySync();
+        runs.unshift(entry); // Add to beginning
+        
+        // Keep only MAX_HISTORY_ENTRIES
+        if (runs.length > MAX_HISTORY_ENTRIES) {
+            runs.length = MAX_HISTORY_ENTRIES;
+        }
+        
+        saveHistorySync(runs);
+        console.log('[InferenceMonitor] History entry saved');
+    } catch (error) {
+        console.error('[InferenceMonitor] Failed to append history:', error.message);
+    }
+}
+
+/**
+ * Get all history entries
+ * @returns {Array} Array of history entries
+ */
+function getHistory() {
+    return loadHistorySync();
+}
+
 class InferenceMonitor {
     constructor() {
         this.exePath = null;
@@ -327,6 +411,23 @@ class InferenceMonitor {
                     result.selectedModelId = effectiveModel?.id || null;
                     result.selectedModelName = effectiveModel?.name || null;
                     this.lastResult = result;
+                    
+                    // Save to persistent history
+                    if (result.success) {
+                        appendHistoryEntry({
+                            timestamp: result.timestamp,
+                            mode: result.mode,
+                            model: result.model || result.selectedModelName || 'Unknown',
+                            throughputFPS: result.throughputFPS,
+                            latencyMs: result.latencyMs,
+                            minLatencyMs: result.minLatencyMs,
+                            maxLatencyMs: result.maxLatencyMs,
+                            p95LatencyMs: result.p95LatencyMs,
+                            precision: result.precision,
+                            device: result.device || result.gpu || 'Unknown GPU'
+                        });
+                    }
+                    
                     resolve(result);
                 } catch (parseError) {
                     console.error('[InferenceMonitor] JSON parse error:', parseError.message);
@@ -481,4 +582,4 @@ class InferenceMonitor {
 // Export singleton instance
 const inferenceMonitor = new InferenceMonitor();
 
-module.exports = { InferenceMonitor, inferenceMonitor };
+module.exports = { InferenceMonitor, inferenceMonitor, getHistory };

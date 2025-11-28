@@ -590,6 +590,15 @@ std::string getFilename(const std::string& path) {
 }
 
 // ============================================================================
+// Convert Windows path to JSON-safe path (backslash -> forward slash)
+// ============================================================================
+std::string toJsonSafePath(const std::string& path) {
+    std::string result = path;
+    std::replace(result.begin(), result.end(), '\\', '/');
+    return result;
+}
+
+// ============================================================================
 // Output JSON result
 // ============================================================================
 void outputJson(const InferenceResult& result) {
@@ -604,7 +613,8 @@ void outputJson(const InferenceResult& result) {
     json.addString("mode", result.mode);
     json.addString("model", result.modelName);
     if (!result.modelPath.empty()) {
-        json.addString("modelPath", result.modelPath);
+        // Convert backslashes to forward slashes for valid JSON
+        json.addString("modelPath", toJsonSafePath(result.modelPath));
     }
     json.addString("precision", result.precision);
     json.addString("tensorrtVersion", result.tensorrtVersion);

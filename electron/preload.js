@@ -56,6 +56,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
         // Check if inference backend is available
         isAvailable: () => ipcRenderer.invoke('inference-is-available'),
         
+        // Get persistent benchmark history
+        getHistory: () => ipcRenderer.invoke('inference-get-history'),
+        
         // Legacy: list models
         listModels: () => ipcRenderer.invoke('inference-get-models'),
     },

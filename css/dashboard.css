@@ -1018,3 +1018,82 @@ canvas {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* ===================================
+   Benchmark History Table
+   =================================== */
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.history-table thead {
+    background: rgba(0, 217, 255, 0.1);
+    border-bottom: 2px solid rgba(0, 217, 255, 0.3);
+}
+
+.history-table th {
+    padding: 12px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--accent-primary, #00d9ff);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.history-table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s ease;
+}
+
+.history-table tbody tr:hover {
+    background: rgba(0, 217, 255, 0.05);
+}
+
+.history-table td {
+    padding: 10px;
+    color: var(--text-secondary, #ccc);
+}
+
+.history-table td:first-child {
+    color: var(--text-muted, #888);
+    font-family: monospace;
+}
+
+.history-table .mode-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.history-table .mode-badge.tensorrt {
+    background: rgba(0, 255, 136, 0.2);
+    color: #00ff88;
+}
+
+.history-table .mode-badge.cuda {
+    background: rgba(255, 102, 0, 0.2);
+    color: #ff6600;
+}
+
+.history-table .mode-badge.onnx {
+    background: rgba(136, 102, 255, 0.2);
+    color: #8866ff;
+}
+
+.history-table .mode-badge.mock {
+    background: rgba(255, 255, 255, 0.1);
+    color: #aaa;
+}
+
+.history-table .empty-history {
+    text-align: center;
+    opacity: 0.5;
+    padding: 30px;
+    font-style: italic;
+}

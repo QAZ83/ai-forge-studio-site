@@ -38,10 +38,61 @@ class InferenceDashboard {
             console.log('🧠 Inference Dashboard: Running in Electron mode');
             await this.loadModels();
             await this.loadStatus();
+            await this.refreshBenchmarkHistory(); // Load persistent history on startup
             this.setupEventListeners();
         } else {
             console.log('🌐 Inference Dashboard: Running in browser mode');
             this.setupMockMode();
+        }
+    }
+    
+    /**
+     * Refresh benchmark history from persistent storage
+     */
+    async refreshBenchmarkHistory() {
+        try {
+            const runs = await window.electronAPI.inference.getHistory();
+            const tbody = document.getElementById('benchmark-history-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            if (!runs || runs.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="5" class="empty-history">Run a benchmark to see history</td>';
+                tbody.appendChild(tr);
+                return;
+            }
+            
+            runs.slice(0, 10).forEach(run => {
+                const tr = document.createElement('tr');
+                
+                const timeCell = document.createElement('td');
+                const modelCell = document.createElement('td');
+                const modeCell = document.createElement('td');
+                const latencyCell = document.createElement('td');
+                const fpsCell = document.createElement('td');
+                
+                const date = new Date(run.timestamp);
+                timeCell.textContent = date.toLocaleTimeString();
+                
+                modelCell.textContent = run.model || '-';
+                modeCell.innerHTML = `<span class="mode-badge ${run.mode || ''}">${(run.mode || '').toUpperCase()}</span>`;
+                latencyCell.textContent = run.latencyMs != null ? run.latencyMs.toFixed(3) + ' ms' : '--';
+                fpsCell.textContent = run.throughputFPS != null ? run.throughputFPS.toFixed(0) + ' FPS' : '--';
+                
+                tr.appendChild(timeCell);
+                tr.appendChild(modelCell);
+                tr.appendChild(modeCell);
+                tr.appendChild(latencyCell);
+                tr.appendChild(fpsCell);
+                
+                tbody.appendChild(tr);
+            });
+            
+            console.log(`📜 Loaded ${runs.length} history entries`);
+        } catch (err) {
+            console.error('[Renderer] Failed to refresh benchmark history:', err);
         }
     }
     
@@ -391,6 +442,9 @@ class InferenceDashboard {
             this.addToHistory(result);
             this.updateUI(result);
             this.updateStatus(result.success ? 'success' : 'error');
+            
+            // Refresh persistent history display
+            await this.refreshBenchmarkHistory();
             
         } catch (error) {
             console.error('❌ Benchmark failed:', error);

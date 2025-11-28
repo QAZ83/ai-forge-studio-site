@@ -315,11 +315,22 @@
                     <h2>📜 Benchmark History</h2>
                 </div>
                 <div class="panel-content">
-                    <div class="inference-history" id="inference-history">
-                        <div class="empty-history">
-                            Run a benchmark to see history
-                        </div>
-                    </div>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Model</th>
+                                <th>Mode</th>
+                                <th>Latency</th>
+                                <th>FPS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="benchmark-history-body">
+                            <tr>
+                                <td colspan="5" class="empty-history">Run a benchmark to see history</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
         </main>

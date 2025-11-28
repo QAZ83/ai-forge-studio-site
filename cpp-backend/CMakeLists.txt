@@ -83,8 +83,28 @@ target_link_libraries(gpu_info_json PRIVATE
     CUDA::nvml
 )
 
+# =============================================================================
+# TensorRT Inference JSON - For Electron Inference Dashboard
+# Works in CUDA benchmark mode even without TensorRT installed
+# =============================================================================
+add_executable(trt_inference_json
+    src/trt_inference_json.cpp
+)
+
+set_source_files_properties(src/trt_inference_json.cpp PROPERTIES LANGUAGE CUDA)
+
+target_include_directories(trt_inference_json PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CUDAToolkit_INCLUDE_DIRS}
+)
+
+target_link_libraries(trt_inference_json PRIVATE
+    CUDA::cudart
+    CUDA::nvml
+)
+
 # Set output directory
-set_target_properties(gpu_info gpu_info_json PROPERTIES
+set_target_properties(gpu_info gpu_info_json trt_inference_json PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 

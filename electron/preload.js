@@ -14,6 +14,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getSystemInfo: () => ipcRenderer.invoke('get-system-info'),
     getRealtimeStats: () => ipcRenderer.invoke('get-realtime-stats'),
 
+    // GPU Metrics (Real data from C++ backend)
+    getGpuMetrics: () => ipcRenderer.invoke('get-gpu-metrics'),
+    startGpuMonitor: (intervalMs) => ipcRenderer.invoke('start-gpu-monitor', intervalMs),
+    stopGpuMonitor: () => ipcRenderer.invoke('stop-gpu-monitor'),
+    onGpuMetricsUpdate: (callback) => {
+        ipcRenderer.on('gpu-metrics-update', (event, metrics) => callback(metrics));
+    },
+
     // File operations
     saveFile: (data) => ipcRenderer.invoke('save-file', data),
     openFile: () => ipcRenderer.invoke('open-file'),

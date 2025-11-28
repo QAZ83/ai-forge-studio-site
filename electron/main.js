@@ -8,6 +8,9 @@ const { app, BrowserWindow, Menu, ipcMain, dialog, shell, globalShortcut, native
 const path = require('path');
 const fs = require('fs');
 
+// GPU Monitor for real GPU metrics
+const { gpuMonitor } = require('./gpu-monitor');
+
 // Disable hardware acceleration if issues detected
 app.disableHardwareAcceleration();
 
@@ -428,6 +431,35 @@ ipcMain.handle('get-realtime-stats', () => {
         totalMemory: os.totalmem(),
         uptime: os.uptime()
     };
+});
+
+// =============================================================================
+// GPU Metrics (Real data from C++ backend)
+// =============================================================================
+
+// Get GPU metrics (single request)
+ipcMain.handle('get-gpu-metrics', async () => {
+    return await gpuMonitor.getMetricsAsync();
+});
+
+// Start GPU monitoring with interval updates
+ipcMain.handle('start-gpu-monitor', (event, intervalMs = 1000) => {
+    gpuMonitor.start(intervalMs);
+    
+    // Send updates to renderer
+    gpuMonitor.onUpdate((metrics) => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('gpu-metrics-update', metrics);
+        }
+    });
+    
+    return { success: true };
+});
+
+// Stop GPU monitoring
+ipcMain.handle('stop-gpu-monitor', () => {
+    gpuMonitor.stop();
+    return { success: true };
 });
 
 console.log('🚀 AI Forge Studio - Electron App Started');

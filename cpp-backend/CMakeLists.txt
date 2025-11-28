@@ -52,7 +52,7 @@ endif()
 # Source Files
 # =============================================================================
 
-# Main executable - GPU Info (Step 1)
+# Main executable - GPU Info (Step 1) - Human readable output
 add_executable(gpu_info
     src/gpu_info.cpp
     src/cuda_helper.cu
@@ -68,8 +68,23 @@ target_link_libraries(gpu_info PRIVATE
     CUDA::nvml
 )
 
+# GPU Info JSON - For Electron integration
+add_executable(gpu_info_json
+    src/gpu_info_json.cpp
+)
+
+target_include_directories(gpu_info_json PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CUDAToolkit_INCLUDE_DIRS}
+)
+
+target_link_libraries(gpu_info_json PRIVATE
+    CUDA::cudart
+    CUDA::nvml
+)
+
 # Set output directory
-set_target_properties(gpu_info PROPERTIES
+set_target_properties(gpu_info gpu_info_json PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 

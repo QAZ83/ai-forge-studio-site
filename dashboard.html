@@ -73,36 +73,36 @@
                 </div>
                 <div class="panel-content">
                     <div class="metrics-grid">
-                        <div class="metric-card">
+                        <div class="metric-card" data-metric="gpu-util">
                             <div class="metric-icon">🎯</div>
                             <div class="metric-info">
-                                <h3>Current GPU Usage</h3>
-                                <p class="metric-value">95%</p>
-                                <p class="metric-change positive">+2.3%</p>
+                                <h3>GPU Usage</h3>
+                                <p class="metric-value gpu-utilization">---%</p>
+                                <p class="metric-label gpu-name" style="font-size: 0.8em; opacity: 0.7;">RTX 5090</p>
                             </div>
                         </div>
-                        <div class="metric-card">
+                        <div class="metric-card" data-metric="power">
                             <div class="metric-icon">⚡</div>
                             <div class="metric-info">
-                                <h3>CPU Usage</h3>
-                                <p class="metric-value">12%</p>
-                                <p class="metric-change negative">-0.5%</p>
+                                <h3>Power Draw</h3>
+                                <p class="metric-value power-draw">---W</p>
+                                <p class="metric-label power-limit" style="font-size: 0.8em; opacity: 0.7;">Limit: ---W</p>
                             </div>
                         </div>
-                        <div class="metric-card">
+                        <div class="metric-card" data-metric="vram">
                             <div class="metric-icon">💾</div>
                             <div class="metric-info">
-                                <h3>Memory</h3>
-                                <p class="metric-value">28GB</p>
-                                <p class="metric-change neutral">0%</p>
+                                <h3>VRAM Usage</h3>
+                                <p class="metric-value vram-used">---GB</p>
+                                <p class="metric-label vram-total" style="font-size: 0.8em; opacity: 0.7;">of ---GB</p>
                             </div>
                         </div>
-                        <div class="metric-card">
+                        <div class="metric-card" data-metric="temp">
                             <div class="metric-icon">🌡️</div>
                             <div class="metric-info">
                                 <h3>Temperature</h3>
-                                <p class="metric-value">72°C</p>
-                                <p class="metric-change positive">-1°C</p>
+                                <p class="metric-value gpu-temp">---°C</p>
+                                <p class="metric-label fan-speed" style="font-size: 0.8em; opacity: 0.7;">Fan: ---%</p>
                             </div>
                         </div>
                     </div>
@@ -112,26 +112,30 @@
             <!-- GPU Tracking -->
             <section class="panel">
                 <div class="panel-header">
-                    <h2>GPU Tracking Constantly</h2>
+                    <h2>GPU Metrics - Real-Time</h2>
                     <div class="status-badges">
-                        <span class="badge success">Online</span>
-                        <span class="badge info">Running</span>
+                        <span class="badge success" id="gpu-status">Monitoring</span>
+                        <span class="badge info cuda-version">CUDA ---</span>
                     </div>
                 </div>
                 <div class="panel-content">
                     <div class="tracking-stats">
                         <div class="stat-row">
                             <span class="stat-label">VRAM:</span>
-                            <span class="stat-value">21/30</span>
+                            <span class="stat-value"><span class="vram-used">---</span> / <span class="vram-total">32GB</span></span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">Clocks:</span>
-                            <span class="stat-value">~21/300</span>
+                            <span class="stat-label">Clock:</span>
+                            <span class="stat-value gpu-clock">--- MHz</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">CUDA Cores:</span>
+                            <span class="stat-value cuda-cores">---</span>
                         </div>
                         <div class="stat-row">
                             <span class="stat-label">Usage:</span>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 95%"></div>
+                                <div class="progress-fill gpu-util-bar" style="width: 0%"></div>
                             </div>
                         </div>
                     </div>
@@ -326,5 +330,7 @@
     <script src="js/dashboard.js"></script>
     <script src="js/interactive.js"></script>
     <script src="js/code-editor.js"></script>
+    <!-- Real GPU Dashboard (RTX 5090 Metrics) -->
+    <script src="js/gpu-dashboard.js"></script>
 </body>
 </html>

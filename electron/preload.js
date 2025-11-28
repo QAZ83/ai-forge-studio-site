@@ -24,13 +24,40 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     // Inference Benchmark (TensorRT / CUDA from C++ backend)
     inference: {
-        runBenchmark: (mode = 'cuda', options = {}) => ipcRenderer.invoke('inference-run-benchmark', mode, options),
+        // Run benchmark with optional mode and options
+        // If mode is null, uses the currently selected mode
+        run: (mode = null, options = {}) => ipcRenderer.invoke('inference-run-benchmark', mode, options),
+        runBenchmark: (mode = null, options = {}) => ipcRenderer.invoke('inference-run-benchmark', mode, options),
+        
+        // Get all available models with selection state
+        getModels: () => ipcRenderer.invoke('inference-get-models'),
+        
+        // Select a model by ID
+        selectModel: (modelId) => ipcRenderer.invoke('inference-select-model-by-id', modelId),
+        
+        // Set the benchmark mode (cuda, mock, tensorrt, onnx)
+        setMode: (mode) => ipcRenderer.invoke('inference-set-mode', mode),
+        
+        // Browse for model file and add to list
+        browseModel: (type = 'onnx') => ipcRenderer.invoke('inference-browse-model', type),
+        
+        // Add a model programmatically
+        addModel: (model) => ipcRenderer.invoke('inference-add-model', model),
+        
+        // Get supported modes
         getModes: () => ipcRenderer.invoke('inference-get-modes'),
-        getLastResult: () => ipcRenderer.invoke('inference-get-last-result'),
-        isAvailable: () => ipcRenderer.invoke('inference-is-available'),
+        
+        // Get current status (includes selected model/mode)
         getStatus: () => ipcRenderer.invoke('inference-get-status'),
-        listModels: () => ipcRenderer.invoke('inference-list-models'),
-        selectModel: (type = 'onnx') => ipcRenderer.invoke('inference-select-model', type),
+        
+        // Get last benchmark result
+        getLastResult: () => ipcRenderer.invoke('inference-get-last-result'),
+        
+        // Check if inference backend is available
+        isAvailable: () => ipcRenderer.invoke('inference-is-available'),
+        
+        // Legacy: list models
+        listModels: () => ipcRenderer.invoke('inference-get-models'),
     },
 
     // File operations

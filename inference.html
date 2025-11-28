@@ -44,120 +44,268 @@
         </header>
 
         <main class="dashboard-grid inference-dashboard" id="inference-container" data-page="inference">
-            <!-- Inference Status Banner -->
+            <!-- Model Manager Panel -->
             <section class="panel wide-panel">
                 <div class="panel-header">
-                    <h2>🚀 TensorRT / CUDA Inference Engine</h2>
-                    <div class="inference-status" id="inference-status">
-                        <span class="badge status-badge">🟢 Ready</span>
+                    <h2>📦 Model Manager</h2>
+                    <div class="header-status">
+                        <span id="backend-status" class="status-indicator">
+                            <span class="status-dot"></span> Backend
+                        </span>
+                        <span id="tensorrt-status" class="status-indicator">
+                            <span class="status-dot"></span> TensorRT
+                        </span>
                     </div>
                 </div>
                 <div class="panel-content">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-                        <!-- Mode Selection -->
-                        <div>
-                            <h3 style="color: #00d9ff; margin-bottom: 15px;">Benchmark Mode</h3>
-                            <select id="inference-mode" class="inference-mode-select" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 2px solid #00d9ff; border-radius: 8px; color: #fff; font-size: 14px;">
-                                <option value="cuda">🔥 CUDA Compute Benchmark</option>
-                                <option value="mock">🧠 TensorRT Simulation (ResNet-50)</option>
-                            </select>
-                        </div>
-                        <!-- Quick Actions -->
-                        <div>
-                            <h3 style="color: #00d9ff; margin-bottom: 15px;">Quick Run</h3>
-                            <div style="display: flex; gap: 10px;">
-                                <button data-inference-mode="cuda" class="action-button" style="flex: 1;">⚡ CUDA</button>
-                                <button data-inference-mode="mock" class="action-button" style="flex: 1;">🧠 TensorRT</button>
+                    <div class="model-manager-grid">
+                        <!-- Model Selection -->
+                        <div class="model-select-section">
+                            <label class="section-label">🧠 Select Model</label>
+                            <div class="select-row">
+                                <select id="model-select" class="model-select styled-select">
+                                    <option value="">Loading models...</option>
+                                </select>
+                                <button id="browse-model-btn" class="icon-btn" title="Browse for model file">📂</button>
+                            </div>
+                            <div class="model-info-mini">
+                                <span class="model-type-badge" id="selected-model-type">--</span>
+                                <span class="model-path-text" id="selected-model-path">--</span>
                             </div>
                         </div>
+                        
+                        <!-- Mode Selection -->
+                        <div class="mode-select-section">
+                            <label class="section-label">⚙️ Inference Mode</label>
+                            <select id="inference-mode" class="inference-mode-select styled-select">
+                                <option value="tensorrt">🚀 TensorRT Engine</option>
+                                <option value="onnx">📦 ONNX → TensorRT</option>
+                                <option value="cuda">💻 CUDA Compute</option>
+                                <option value="mock">🎭 Mock / Simulation</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="quick-actions-section">
+                            <label class="section-label">⚡ Quick Run</label>
+                            <div class="quick-btns">
+                                <button data-inference-mode="tensorrt" class="quick-btn tensorrt">TensorRT</button>
+                                <button data-inference-mode="cuda" class="quick-btn cuda">CUDA</button>
+                                <button data-inference-mode="mock" class="quick-btn mock">Mock</button>
+                            </div>
+                        </div>
+                        
                         <!-- Run Button -->
-                        <div>
-                            <h3 style="color: #00d9ff; margin-bottom: 15px;">Execute</h3>
-                            <button id="run-inference-btn" class="action-button primary run-inference-btn" data-action="run-benchmark" style="width: 100%; padding: 12px; font-size: 16px;">
-                                🚀 Run Benchmark
+                        <div class="run-section">
+                            <button id="run-inference-btn" class="run-benchmark-btn" data-action="run-benchmark">
+                                <span class="btn-icon">▶️</span>
+                                <span class="btn-text">Run Benchmark</span>
                             </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Error Message -->
+                    <div id="inference-error" class="inference-error" style="display: none;"></div>
+                </div>
+            </section>
+
+            <!-- Model Info Card -->
+            <section class="panel" id="model-selection">
+                <div class="panel-header">
+                    <h2>📋 Selected Model Info</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="model-info-card">
+                        <div class="info-row">
+                            <span class="info-label">Name:</span>
+                            <span class="info-value" id="selected-model-name">No model selected</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Type:</span>
+                            <span class="info-value type-badge" id="selected-model-type">--</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Description:</span>
+                            <span class="info-value" id="selected-model-desc">--</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Input Shape:</span>
+                            <span class="info-value" id="model-input-shape">--</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Precision:</span>
+                            <span class="info-value" id="model-precision">--</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Status:</span>
+                            <span class="info-value" id="model-exists">--</span>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Real-Time Metrics from C++ Backend -->
+            <!-- Inference Status -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📊 Inference Status</h2>
+                    <div class="inference-status" id="inference-status">
+                        <span class="badge status-badge">🟢 Ready</span>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="status-grid">
+                        <div class="stat-row">
+                            <span class="stat-label">Mode:</span>
+                            <span class="stat-value" id="current-inference-mode">--</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Batch Size:</span>
+                            <span class="stat-value" id="inference-batch-size">--</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Input Shape:</span>
+                            <span class="stat-value" id="inference-input-shape">--</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">TensorRT:</span>
+                            <span class="stat-value" id="inference-tensorrt-version">--</span>
+                        </div>
+                        <div class="stat-row full-width">
+                            <span class="stat-label">Status:</span>
+                            <span class="stat-value" id="inference-status-text">Ready to run</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Real-Time Metrics -->
             <section class="panel tall-panel">
                 <div class="panel-header">
-                    <h2>📊 Real-Time Benchmark Results</h2>
+                    <h2>📈 Benchmark Results</h2>
                     <span class="inference-timestamp" id="inference-timestamp">--:--:--</span>
                 </div>
                 <div class="panel-content">
                     <div class="metrics-grid">
-                        <div class="metric-card" data-metric="latency">
+                        <!-- Latency -->
+                        <div class="metric-card primary" data-metric="latency">
                             <div class="metric-icon">⏱️</div>
                             <div class="metric-info">
-                                <h3>Latency</h3>
-                                <p class="metric-value inference-latency" id="inference-latency">-- ms</p>
-                                <div class="progress-bar" style="margin-top: 8px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-                                    <div class="latency-bar" style="height: 100%; background: linear-gradient(90deg, #00ff88, #00d9ff); border-radius: 2px; width: 0%;"></div>
+                                <h3>Latency (Avg)</h3>
+                                <p class="metric-value" id="inference-latency">-- ms</p>
+                                <div class="progress-bar">
+                                    <div class="latency-bar"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="metric-card" data-metric="throughput">
+                        
+                        <!-- Throughput -->
+                        <div class="metric-card primary" data-metric="throughput">
                             <div class="metric-icon">🚀</div>
                             <div class="metric-info">
                                 <h3>Throughput</h3>
-                                <p class="metric-value inference-throughput" id="inference-throughput">-- FPS</p>
-                                <div class="progress-bar" style="margin-top: 8px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-                                    <div class="throughput-bar" style="height: 100%; background: linear-gradient(90deg, #ff6600, #ff0066); border-radius: 2px; width: 0%;"></div>
+                                <p class="metric-value" id="inference-throughput">-- FPS</p>
+                                <div class="progress-bar">
+                                    <div class="throughput-bar"></div>
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Model -->
                         <div class="metric-card" data-metric="model">
                             <div class="metric-icon">🧠</div>
                             <div class="metric-info">
                                 <h3>Model</h3>
-                                <p class="metric-value inference-model" id="inference-model" style="font-size: 0.9em;">--</p>
+                                <p class="metric-value small" id="inference-model">--</p>
                             </div>
                         </div>
+                        
+                        <!-- Precision -->
                         <div class="metric-card" data-metric="precision">
                             <div class="metric-icon">🎯</div>
                             <div class="metric-info">
                                 <h3>Precision</h3>
-                                <p class="metric-value inference-precision" id="inference-precision">--</p>
+                                <p class="metric-value" id="inference-precision">--</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- GPU Info from Inference -->
-                    <div style="margin-top: 20px; padding: 15px; background: rgba(0, 217, 255, 0.05); border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.2);">
-                        <h4 style="color: #00d9ff; margin-bottom: 12px;">🎮 GPU Information</h4>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; font-size: 0.9em;">
-                            <div>
-                                <span style="opacity: 0.7;">Device:</span>
-                                <span class="inference-device" id="inference-device" style="color: #00ffcc;">--</span>
+                    <!-- Latency Details -->
+                    <div class="latency-details">
+                        <h4>⏱️ Latency Breakdown</h4>
+                        <div class="latency-grid">
+                            <div class="latency-item">
+                                <span class="label">Min</span>
+                                <span class="value" id="inference-min-latency">-- ms</span>
                             </div>
-                            <div>
-                                <span style="opacity: 0.7;">CUDA:</span>
-                                <span class="inference-cuda-version" id="inference-cuda-version" style="color: #00ffcc;">--</span>
+                            <div class="latency-item">
+                                <span class="label">Avg</span>
+                                <span class="value" id="inference-latency-avg">-- ms</span>
                             </div>
-                            <div>
-                                <span style="opacity: 0.7;">Driver:</span>
-                                <span class="inference-driver" id="inference-driver" style="color: #00ffcc;">--</span>
+                            <div class="latency-item">
+                                <span class="label">Max</span>
+                                <span class="value" id="inference-max-latency">-- ms</span>
                             </div>
-                            <div>
-                                <span style="opacity: 0.7;">SM Count:</span>
-                                <span class="inference-sm-count" id="inference-sm-count" style="color: #00ffcc;">--</span>
-                            </div>
-                            <div>
-                                <span style="opacity: 0.7;">CUDA Cores:</span>
-                                <span class="inference-cuda-cores" id="inference-cuda-cores" style="color: #00ffcc;">--</span>
-                            </div>
-                            <div>
-                                <span style="opacity: 0.7;">Memory:</span>
-                                <span class="inference-memory" id="inference-memory" style="color: #00ffcc;">--</span>
+                            <div class="latency-item">
+                                <span class="label">P95</span>
+                                <span class="value" id="inference-p95-latency">-- ms</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Chart -->
-                    <canvas id="inferenceChart" height="200" style="margin-top: 20px;"></canvas>
+                    <!-- GPU Info -->
+                    <div class="gpu-info-panel">
+                        <h4>🎮 GPU Information</h4>
+                        <div class="gpu-grid">
+                            <div class="gpu-item">
+                                <span class="label">Device:</span>
+                                <span class="value" id="inference-device">--</span>
+                            </div>
+                            <div class="gpu-item">
+                                <span class="label">CUDA:</span>
+                                <span class="value" id="inference-cuda-version">--</span>
+                            </div>
+                            <div class="gpu-item">
+                                <span class="label">Driver:</span>
+                                <span class="value" id="inference-driver">--</span>
+                            </div>
+                            <div class="gpu-item">
+                                <span class="label">Compute:</span>
+                                <span class="value" id="inference-compute-capability">--</span>
+                            </div>
+                            <div class="gpu-item">
+                                <span class="label">SM Count:</span>
+                                <span class="value" id="inference-sm-count">--</span>
+                            </div>
+                            <div class="gpu-item">
+                                <span class="label">CUDA Cores:</span>
+                                <span class="value" id="inference-cuda-cores">--</span>
+                            </div>
+                            <div class="gpu-item">
+                                <span class="label">Memory:</span>
+                                <span class="value" id="inference-memory">--</span>
+                            </div>
+                            <div class="gpu-item">
+                                <span class="label">VRAM Total:</span>
+                                <span class="value" id="inference-vram-total">--</span>
+                            </div>
+                            <div class="gpu-item">
+                                <span class="label">Temperature:</span>
+                                <span class="value" id="inference-temperature">--</span>
+                            </div>
+                            <div class="gpu-item">
+                                <span class="label">Power:</span>
+                                <span class="value" id="inference-power">--</span>
+                            </div>
+                            <div class="gpu-item">
+                                <span class="label">GPU Clock:</span>
+                                <span class="value" id="inference-gpu-clock">--</span>
+                            </div>
+                            <div class="gpu-item">
+                                <span class="label">Mem Clock:</span>
+                                <span class="value" id="inference-mem-clock">--</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -167,36 +315,9 @@
                     <h2>📜 Benchmark History</h2>
                 </div>
                 <div class="panel-content">
-                    <div class="inference-history" id="inference-history" style="max-height: 200px; overflow-y: auto;">
-                        <div style="text-align: center; opacity: 0.5; padding: 20px;">
+                    <div class="inference-history" id="inference-history">
+                        <div class="empty-history">
                             Run a benchmark to see history
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Status & Info -->
-            <section class="panel">
-                <div class="panel-header">
-                    <h2>ℹ️ Current Status</h2>
-                </div>
-                <div class="panel-content">
-                    <div style="padding: 15px; background: rgba(0, 217, 255, 0.05); border-radius: 8px;">
-                        <div class="stat-row" style="margin-bottom: 10px;">
-                            <span class="stat-label">Mode:</span>
-                            <span class="stat-value inference-mode" id="current-inference-mode">--</span>
-                        </div>
-                        <div class="stat-row" style="margin-bottom: 10px;">
-                            <span class="stat-label">Batch Size:</span>
-                            <span class="stat-value inference-batch-size" id="inference-batch-size">--</span>
-                        </div>
-                        <div class="stat-row" style="margin-bottom: 10px;">
-                            <span class="stat-label">Input Shape:</span>
-                            <span class="stat-value inference-input-shape" id="inference-input-shape">--</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Status:</span>
-                            <span class="stat-value inference-status-text" id="inference-status-text">Ready</span>
                         </div>
                     </div>
                 </div>

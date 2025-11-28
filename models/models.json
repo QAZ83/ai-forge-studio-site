@@ -1,0 +1,24 @@
+{
+  "models": [
+    {
+      "id": "squeezenet-engine",
+      "name": "SqueezeNet FP16 Engine",
+      "description": "Pre-optimized TensorRT engine for fast inference",
+      "type": "engine",
+      "path": "models/squeezenet.engine",
+      "inputShape": [1, 3, 224, 224],
+      "precision": "FP16"
+    },
+    {
+      "id": "squeezenet-onnx",
+      "name": "SqueezeNet ONNX",
+      "description": "ONNX model - will be converted to TensorRT on first run",
+      "type": "onnx",
+      "path": "models/squeezenet.onnx",
+      "inputShape": [1, 3, 224, 224],
+      "precision": "FP32"
+    }
+  ],
+  "selectedModelId": "squeezenet-engine",
+  "defaultMode": "tensorrt"
+}

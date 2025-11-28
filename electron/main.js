@@ -469,9 +469,10 @@ ipcMain.handle('stop-gpu-monitor', () => {
 // Inference Benchmark (TensorRT / CUDA from C++ backend)
 // =============================================================================
 
-// Run inference benchmark
-ipcMain.handle('inference-run-benchmark', async (event, mode = 'cuda', options = {}) => {
-    console.log(`[Inference] Running benchmark in ${mode} mode...`);
+// Run inference benchmark with selected model and mode
+ipcMain.handle('inference-run-benchmark', async (event, mode = null, options = {}) => {
+    const effectiveMode = mode || inferenceMonitor.selectedMode || 'cuda';
+    console.log(`[Inference] Running benchmark in ${effectiveMode} mode...`);
     const result = await inferenceMonitor.runBenchmark(mode, options);
     console.log(`[Inference] Benchmark complete: ${result.success ? result.throughputFPS + ' FPS' : result.error}`);
     return result;
@@ -492,18 +493,38 @@ ipcMain.handle('inference-is-available', () => {
     return inferenceMonitor.isAvailable();
 });
 
-// Get inference service status
+// Get inference service status (includes selected model info)
 ipcMain.handle('inference-get-status', () => {
     return inferenceMonitor.getStatus();
 });
 
-// List available models
-ipcMain.handle('inference-list-models', () => {
-    return inferenceMonitor.listModels();
+// Get all models with selected model info
+ipcMain.handle('inference-get-models', () => {
+    return inferenceMonitor.getModels();
 });
 
-// Select model file dialog
-ipcMain.handle('inference-select-model', async (event, type = 'onnx') => {
+// Select a model by ID
+ipcMain.handle('inference-select-model-by-id', (event, modelId) => {
+    return inferenceMonitor.selectModel(modelId);
+});
+
+// Set benchmark mode
+ipcMain.handle('inference-set-mode', (event, mode) => {
+    return inferenceMonitor.setMode(mode);
+});
+
+// Add a new model
+ipcMain.handle('inference-add-model', (event, model) => {
+    return inferenceMonitor.addModel(model);
+});
+
+// List available models (legacy, returns same as get-models)
+ipcMain.handle('inference-list-models', () => {
+    return inferenceMonitor.getModels();
+});
+
+// Browse and select model file dialog
+ipcMain.handle('inference-browse-model', async (event, type = 'onnx') => {
     const filters = type === 'onnx' 
         ? [{ name: 'ONNX Models', extensions: ['onnx'] }]
         : [{ name: 'TensorRT Engines', extensions: ['engine', 'plan'] }];
@@ -515,9 +536,32 @@ ipcMain.handle('inference-select-model', async (event, type = 'onnx') => {
     });
     
     if (!result.canceled && result.filePaths.length > 0) {
-        return { success: true, path: result.filePaths[0] };
+        const filePath = result.filePaths[0];
+        const fileName = path.basename(filePath);
+        const fileType = path.extname(filePath).toLowerCase() === '.onnx' ? 'onnx' : 'engine';
+        
+        // Auto-add to models list
+        const model = {
+            id: fileName.replace(/\.(onnx|engine)$/i, '') + '-' + fileType,
+            name: fileName,
+            description: `Imported ${fileType.toUpperCase()} model`,
+            type: fileType,
+            path: filePath
+        };
+        
+        const addResult = inferenceMonitor.addModel(model);
+        if (addResult.success) {
+            inferenceMonitor.selectModel(model.id);
+        }
+        
+        return { success: true, path: filePath, model: addResult.model };
     }
     return { success: false, canceled: true };
+});
+
+// Legacy: Select model file dialog
+ipcMain.handle('inference-select-model', async (event, type = 'onnx') => {
+    return await ipcMain.handle('inference-browse-model', event, type);
 });
 
 console.log('🚀 AI Forge Studio - Electron App Started');

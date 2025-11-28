@@ -22,6 +22,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
         ipcRenderer.on('gpu-metrics-update', (event, metrics) => callback(metrics));
     },
 
+    // Inference Benchmark (TensorRT / CUDA from C++ backend)
+    inference: {
+        runBenchmark: (mode = 'cuda', options = {}) => ipcRenderer.invoke('inference-run-benchmark', mode, options),
+        getModes: () => ipcRenderer.invoke('inference-get-modes'),
+        getLastResult: () => ipcRenderer.invoke('inference-get-last-result'),
+        isAvailable: () => ipcRenderer.invoke('inference-is-available'),
+    },
+
     // File operations
     saveFile: (data) => ipcRenderer.invoke('save-file', data),
     openFile: () => ipcRenderer.invoke('open-file'),

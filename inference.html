@@ -43,107 +43,160 @@
             </nav>
         </header>
 
-        <main class="dashboard-grid">
+        <main class="dashboard-grid inference-dashboard" id="inference-container" data-page="inference">
+            <!-- Inference Status Banner -->
             <section class="panel wide-panel">
                 <div class="panel-header">
-                    <h2>🚀 Real-Time Inference Engine</h2>
-                    <button class="panel-action" id="start-inference">▶️ Start</button>
+                    <h2>🚀 TensorRT / CUDA Inference Engine</h2>
+                    <div class="inference-status" id="inference-status">
+                        <span class="badge status-badge">🟢 Ready</span>
+                    </div>
                 </div>
                 <div class="panel-content">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                        <!-- Mode Selection -->
                         <div>
-                            <h3 style="color: #00d9ff; margin-bottom: 15px;">Select Model</h3>
-                            <select id="model-select" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 2px solid #00d9ff; border-radius: 8px; color: #fff; font-size: 14px;">
-                                <option>ResNet-50 (Image Classification)</option>
-                                <option>YOLO v8 (Object Detection)</option>
-                                <option>Llama 3.1 70B (LLM)</option>
-                                <option>Stable Diffusion XL (Image Generation)</option>
-                                <option>Whisper Large (Speech Recognition)</option>
+                            <h3 style="color: #00d9ff; margin-bottom: 15px;">Benchmark Mode</h3>
+                            <select id="inference-mode" class="inference-mode-select" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 2px solid #00d9ff; border-radius: 8px; color: #fff; font-size: 14px;">
+                                <option value="cuda">🔥 CUDA Compute Benchmark</option>
+                                <option value="mock">🧠 TensorRT Simulation (ResNet-50)</option>
                             </select>
                         </div>
+                        <!-- Quick Actions -->
                         <div>
-                            <h3 style="color: #00d9ff; margin-bottom: 15px;">Inference Settings</h3>
+                            <h3 style="color: #00d9ff; margin-bottom: 15px;">Quick Run</h3>
                             <div style="display: flex; gap: 10px;">
-                                <button onclick="setPrecision('FP32')" class="action-button" style="flex: 1;">FP32</button>
-                                <button onclick="setPrecision('FP16')" class="action-button primary" style="flex: 1;">FP16</button>
-                                <button onclick="setPrecision('INT8')" class="action-button" style="flex: 1;">INT8</button>
+                                <button data-inference-mode="cuda" class="action-button" style="flex: 1;">⚡ CUDA</button>
+                                <button data-inference-mode="mock" class="action-button" style="flex: 1;">🧠 TensorRT</button>
                             </div>
+                        </div>
+                        <!-- Run Button -->
+                        <div>
+                            <h3 style="color: #00d9ff; margin-bottom: 15px;">Execute</h3>
+                            <button id="run-inference-btn" class="action-button primary run-inference-btn" data-action="run-benchmark" style="width: 100%; padding: 12px; font-size: 16px;">
+                                🚀 Run Benchmark
+                            </button>
                         </div>
                     </div>
                 </div>
             </section>
 
+            <!-- Real-Time Metrics from C++ Backend -->
             <section class="panel tall-panel">
                 <div class="panel-header">
-                    <h2>📊 Real-Time Metrics</h2>
+                    <h2>📊 Real-Time Benchmark Results</h2>
+                    <span class="inference-timestamp" id="inference-timestamp">--:--:--</span>
                 </div>
                 <div class="panel-content">
                     <div class="metrics-grid">
-                        <div class="metric-card">
+                        <div class="metric-card" data-metric="latency">
+                            <div class="metric-icon">⏱️</div>
                             <div class="metric-info">
                                 <h3>Latency</h3>
-                                <p class="metric-value" id="latency-display">2.1 ms</p>
+                                <p class="metric-value inference-latency" id="inference-latency">-- ms</p>
+                                <div class="progress-bar" style="margin-top: 8px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
+                                    <div class="latency-bar" style="height: 100%; background: linear-gradient(90deg, #00ff88, #00d9ff); border-radius: 2px; width: 0%;"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="metric-card">
+                        <div class="metric-card" data-metric="throughput">
+                            <div class="metric-icon">🚀</div>
                             <div class="metric-info">
                                 <h3>Throughput</h3>
-                                <p class="metric-value" id="throughput-display">476 FPS</p>
+                                <p class="metric-value inference-throughput" id="inference-throughput">-- FPS</p>
+                                <div class="progress-bar" style="margin-top: 8px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
+                                    <div class="throughput-bar" style="height: 100%; background: linear-gradient(90deg, #ff6600, #ff0066); border-radius: 2px; width: 0%;"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="metric-card">
+                        <div class="metric-card" data-metric="model">
+                            <div class="metric-icon">🧠</div>
                             <div class="metric-info">
-                                <h3>GPU Usage</h3>
-                                <p class="metric-value" id="gpu-usage">98%</p>
+                                <h3>Model</h3>
+                                <p class="metric-value inference-model" id="inference-model" style="font-size: 0.9em;">--</p>
                             </div>
                         </div>
-                        <div class="metric-card">
+                        <div class="metric-card" data-metric="precision">
+                            <div class="metric-icon">🎯</div>
                             <div class="metric-info">
-                                <h3>Total Inferences</h3>
-                                <p class="metric-value" id="total-inferences">0</p>
+                                <h3>Precision</h3>
+                                <p class="metric-value inference-precision" id="inference-precision">--</p>
                             </div>
                         </div>
                     </div>
-                    <canvas id="inferenceChart" height="250" style="margin-top: 20px;"></canvas>
+
+                    <!-- GPU Info from Inference -->
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(0, 217, 255, 0.05); border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.2);">
+                        <h4 style="color: #00d9ff; margin-bottom: 12px;">🎮 GPU Information</h4>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; font-size: 0.9em;">
+                            <div>
+                                <span style="opacity: 0.7;">Device:</span>
+                                <span class="inference-device" id="inference-device" style="color: #00ffcc;">--</span>
+                            </div>
+                            <div>
+                                <span style="opacity: 0.7;">CUDA:</span>
+                                <span class="inference-cuda-version" id="inference-cuda-version" style="color: #00ffcc;">--</span>
+                            </div>
+                            <div>
+                                <span style="opacity: 0.7;">Driver:</span>
+                                <span class="inference-driver" id="inference-driver" style="color: #00ffcc;">--</span>
+                            </div>
+                            <div>
+                                <span style="opacity: 0.7;">SM Count:</span>
+                                <span class="inference-sm-count" id="inference-sm-count" style="color: #00ffcc;">--</span>
+                            </div>
+                            <div>
+                                <span style="opacity: 0.7;">CUDA Cores:</span>
+                                <span class="inference-cuda-cores" id="inference-cuda-cores" style="color: #00ffcc;">--</span>
+                            </div>
+                            <div>
+                                <span style="opacity: 0.7;">Memory:</span>
+                                <span class="inference-memory" id="inference-memory" style="color: #00ffcc;">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart -->
+                    <canvas id="inferenceChart" height="200" style="margin-top: 20px;"></canvas>
                 </div>
             </section>
 
+            <!-- Benchmark History -->
             <section class="panel">
                 <div class="panel-header">
-                    <h2>🎯 Input/Output</h2>
+                    <h2>📜 Benchmark History</h2>
                 </div>
                 <div class="panel-content">
-                    <h3 style="color: #00d9ff; margin-bottom: 15px;">Input Data</h3>
-                    <textarea id="input-data" style="width: 100%; height: 120px; background: rgba(0, 0, 0, 0.5); border: 2px solid #00d9ff; border-radius: 8px; color: #fff; padding: 12px; font-family: 'Courier New', monospace; resize: vertical;" placeholder="Enter input data or upload file..."></textarea>
-
-                    <div style="margin: 15px 0; display: flex; gap: 10px;">
-                        <button class="action-button" style="flex: 1;" onclick="uploadFile()">📁 Upload File</button>
-                        <button class="action-button primary" style="flex: 1;" onclick="runInference()">🚀 Run Inference</button>
-                    </div>
-
-                    <h3 style="color: #00d9ff; margin-bottom: 15px; margin-top: 25px;">Output Results</h3>
-                    <div id="output-results" style="background: rgba(0, 217, 255, 0.05); border: 2px solid #00d9ff; border-radius: 8px; padding: 15px; min-height: 100px; font-family: 'Courier New', monospace; color: #00ffcc;">
-                        Waiting for inference...
+                    <div class="inference-history" id="inference-history" style="max-height: 200px; overflow-y: auto;">
+                        <div style="text-align: center; opacity: 0.5; padding: 20px;">
+                            Run a benchmark to see history
+                        </div>
                     </div>
                 </div>
             </section>
 
+            <!-- Status & Info -->
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📈 Batch Processing</h2>
+                    <h2>ℹ️ Current Status</h2>
                 </div>
                 <div class="panel-content">
-                    <div class="stat-row">
-                        <span class="stat-label">Batch Size:</span>
-                        <input type="range" id="batch-size" min="1" max="64" value="8" style="flex: 1; margin: 0 15px;" oninput="document.getElementById('batch-value').textContent = this.value">
-                        <span id="batch-value" style="color: #00ffcc; font-weight: 600;">8</span>
-                    </div>
-                    <button class="action-button primary" style="width: 100%; margin-top: 15px;" onclick="runBatchInference()">
-                        🔄 Run Batch Inference
-                    </button>
-                    <div id="batch-progress" style="margin-top: 15px; display: none;">
-                        <div style="background: rgba(0, 217, 255, 0.1); border-radius: 8px; overflow: hidden;">
-                            <div id="batch-bar" style="height: 30px; background: linear-gradient(90deg, #00d9ff 0%, #0099ff 100%); width: 0%; transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 600;"></div>
+                    <div style="padding: 15px; background: rgba(0, 217, 255, 0.05); border-radius: 8px;">
+                        <div class="stat-row" style="margin-bottom: 10px;">
+                            <span class="stat-label">Mode:</span>
+                            <span class="stat-value inference-mode" id="current-inference-mode">--</span>
+                        </div>
+                        <div class="stat-row" style="margin-bottom: 10px;">
+                            <span class="stat-label">Batch Size:</span>
+                            <span class="stat-value inference-batch-size" id="inference-batch-size">--</span>
+                        </div>
+                        <div class="stat-row" style="margin-bottom: 10px;">
+                            <span class="stat-label">Input Shape:</span>
+                            <span class="stat-value inference-input-shape" id="inference-input-shape">--</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Status:</span>
+                            <span class="stat-value inference-status-text" id="inference-status-text">Ready</span>
                         </div>
                     </div>
                 </div>
@@ -156,5 +209,7 @@
     <script src="js/app.js"></script>
     <script src="js/interactive.js"></script>
     <script src="js/inference.js"></script>
+    <!-- Real Inference Dashboard (RTX 5090 / CUDA / TensorRT) -->
+    <script src="js/inference-dashboard.js"></script>
 </body>
 </html>

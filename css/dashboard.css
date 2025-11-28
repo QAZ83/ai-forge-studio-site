@@ -453,6 +453,91 @@ canvas {
     border: 1px solid var(--warning-yellow);
 }
 
+/* ===================================
+   Inference Dashboard Styles
+   =================================== */
+
+.inference-dashboard .inference-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.inference-status .status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.inference-status.ready .status-badge {
+    background: rgba(0, 255, 136, 0.2);
+    color: #00ff88;
+}
+
+.inference-status.running .status-badge {
+    background: rgba(255, 213, 0, 0.2);
+    color: #ffd500;
+    animation: pulse 1s infinite;
+}
+
+.inference-status.success .status-badge {
+    background: rgba(0, 217, 255, 0.2);
+    color: #00d9ff;
+}
+
+.inference-status.error .status-badge {
+    background: rgba(255, 68, 68, 0.2);
+    color: #ff4444;
+}
+
+/* History Items */
+.inference-history .history-item {
+    display: grid;
+    grid-template-columns: 80px 100px 80px 1fr;
+    gap: 15px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border-left: 3px solid #00d9ff;
+    font-size: 0.9em;
+    align-items: center;
+}
+
+.inference-history .history-item.success {
+    border-left-color: #00ff88;
+}
+
+.inference-history .history-item.error {
+    border-left-color: #ff4444;
+}
+
+.inference-history .history-mode {
+    color: #00d9ff;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.inference-history .history-fps {
+    color: #00ff88;
+    font-weight: 700;
+}
+
+.inference-history .history-latency {
+    color: #ffd500;
+}
+
+.inference-history .history-time {
+    color: rgba(255, 255, 255, 0.5);
+    text-align: right;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
 /* Responsive Dashboard */
 @media (max-width: 1400px) {
     .dashboard-grid {

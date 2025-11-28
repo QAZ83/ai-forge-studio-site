@@ -11,6 +11,9 @@ const fs = require('fs');
 // GPU Monitor for real GPU metrics
 const { gpuMonitor } = require('./gpu-monitor');
 
+// Inference Monitor for TensorRT benchmarks
+const { inferenceMonitor } = require('./inference-monitor');
+
 // Disable hardware acceleration if issues detected
 app.disableHardwareAcceleration();
 
@@ -460,6 +463,33 @@ ipcMain.handle('start-gpu-monitor', (event, intervalMs = 1000) => {
 ipcMain.handle('stop-gpu-monitor', () => {
     gpuMonitor.stop();
     return { success: true };
+});
+
+// =============================================================================
+// Inference Benchmark (TensorRT / CUDA from C++ backend)
+// =============================================================================
+
+// Run inference benchmark
+ipcMain.handle('inference-run-benchmark', async (event, mode = 'cuda', options = {}) => {
+    console.log(`[Inference] Running benchmark in ${mode} mode...`);
+    const result = await inferenceMonitor.runBenchmark(mode, options);
+    console.log(`[Inference] Benchmark complete: ${result.throughputFPS} FPS`);
+    return result;
+});
+
+// Get supported inference modes
+ipcMain.handle('inference-get-modes', () => {
+    return inferenceMonitor.getSupportedModes();
+});
+
+// Get last inference result
+ipcMain.handle('inference-get-last-result', () => {
+    return inferenceMonitor.getLastResult();
+});
+
+// Check if inference is available
+ipcMain.handle('inference-is-available', () => {
+    return inferenceMonitor.isAvailable();
 });
 
 console.log('🚀 AI Forge Studio - Electron App Started');
